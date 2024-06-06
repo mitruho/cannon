@@ -1,0 +1,24 @@
+MainUI:
+
+<MainUI>:
+    orientation: "vertical"
+    ButtonStack:
+        size_hint: 1, .1
+    CannonWidget:
+
+<ButtonStack>:
+    orientation: "lr-bt"
+
+<CannonWidget>:
+    angle: 0
+    canvas.before:
+        PushMatrix
+        Rotate:
+            angle: root.angle
+            origin: self.x, self.center_y
+    canvas:
+        Rectangle:
+            pos: self.x, self.center_y - 5
+            size: 100, 30
+    canvas.after:
+        PopMatrix
