@@ -1,10 +1,14 @@
 MainUI:
 
 <MainUI>:
-    orientation: "vertical"
-    ButtonStack:
-        size_hint: 1, .1
-    CannonWidget:
+    FloatLayout: 
+        ButtonStack:
+            size_hint: 1, .1
+            pos_hint: {"x": 0, "y": 0.9}
+        CannonWidget:
+            size_hint: None, None
+            size: 100, 30
+            pos: 50, 50
 
 <ButtonStack>:
     orientation: "lr-bt"
@@ -13,6 +17,9 @@ MainUI:
     angle: 0
     canvas.before:
         PushMatrix
+        Ellipse:
+            size: 50, 50  # Size of the circle
+            pos: self.x/2, self.y - 10
         Rotate:
             angle: root.angle
             origin: self.x, self.center_y

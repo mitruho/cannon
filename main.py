@@ -42,7 +42,7 @@ class CannonWidget(Widget):
         dx = mouse_x - self.x
         dy = mouse_y - (self.y + self.height / 2)
         angle = Vector(dx, dy).angle(Vector(1, 0))
-        self.angle = max(0, min(180, angle))
+        self.angle = max(0, min(90, angle))
 
 class CannonApp(App):
     pass
