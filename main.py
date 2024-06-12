@@ -38,7 +38,6 @@ class Projectile(Widget):
     gravity = 9.81  # gravitational acceleration in m/s^2
     time = 0
     launch_speed = BULLET_MAX_VEL
-    mass = NumericProperty(1000)  # mass of the projectile in kg
     visible = BooleanProperty(False)
 
     def __init__(self, **kwargs):
