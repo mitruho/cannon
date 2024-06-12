@@ -1,40 +1,18 @@
 from kivy.app import App
-from kivy.metrics import dp
 from kivy.uix.widget import Widget
-from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.stacklayout import StackLayout
 from kivy.vector import Vector
 from kivy.clock import Clock
 from kivy.core.window import Window
-from kivy.properties import NumericProperty
+from kivy.properties import NumericProperty, ObjectProperty
+import math
+from cannon_constants import *
 
-class MainUI(BoxLayout):
-    pass
-
-class ButtonStack(StackLayout):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        buttons_info = [
-            ('Bullet', (75, 50)),
-            ('Bombshell', (75, 50)),
-            ('Laser', (75, 50)),
-            ('Restart', (100, 50)),
-            ('Hall of Fame', (100, 50)),
-            ('Help', (100, 50)),
-        ]
-        
-        for text, size in buttons_info:
-            self.add_widget(self.create_button(text, size))
-
-    def create_button(self, text, size):
-        return Button(text=text, size_hint=(None, None), size=(dp(size[0]), dp(size[1])))
-
-class CannonWidget(Widget):
+class Cannon(Widget):
     angle = NumericProperty(0)
 
     def __init__(self, **kwargs):
-        super(CannonWidget, self).__init__(**kwargs)
+        super(Cannon, self).__init__(**kwargs)
         Window.bind(mouse_pos=self.on_mouse_pos)
 
     def on_mouse_pos(self, *args):
@@ -44,9 +22,63 @@ class CannonWidget(Widget):
         angle = Vector(dx, dy).angle(Vector(1, 0))
         self.angle = max(0, min(90, angle))
 
+class Projectile(Widget):
+    projectile_height = BULLET_RADIUS * 2
+    projectile_width = BULLET_RADIUS * 2
+    x_velocity = NumericProperty(0)
+    y_velocity = NumericProperty(0)
+    gravity = 9.81  # gravitational acceleration in m/s^2
+    time = 0
+    launch_speed = BULLET_MAX_VEL
+    mass = NumericProperty(1000)  # mass of the projectile in kg
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.launch_angle_radians = 0
+        self._clock_event = None
+
+    def start_moving(self, launch_angle):
+        self.launch_angle_radians = math.radians(launch_angle)
+        self.x_velocity = self.launch_speed * math.cos(self.launch_angle_radians)
+        self.y_velocity = self.launch_speed * math.sin(self.launch_angle_radians)
+        self.time = 0  # reset time
+        self._clock_event = Clock.schedule_interval(self.move, 1/FPS)  # Update 60 times per second
+
+    def stop_moving(self):
+        if self._clock_event:
+            Clock.unschedule(self._clock_event)
+            self._clock_event = None
+
+    def move(self, dt):
+        self.time += dt
+
+        # Update position based on velocity and time
+        new_x = self.x_velocity * self.time
+        new_y = self.y_velocity * self.time - 0.5 * (self.gravity * (self.time ** 2))
+
+        # Check if the projectile hits the ground
+        if new_y < 0:
+            new_y = 0
+            self.stop_moving()
+
+        self.x = new_x
+        self.y = new_y
+
+class CannonGame(Widget):
+    projectile = ObjectProperty(None)
+    cannon = ObjectProperty(None)
+    times_launched = 0
+
+    def on_touch_down(self, touch):
+        if self.times_launched == 0:
+            self.projectile.start_moving(self.cannon.angle)
+            self.times_launched += 1
+            return super().on_touch_down(touch)
+
 class CannonApp(App):
-    pass
-
-
+    def build(self):
+        game = CannonGame()
+        Window.size = (SCREEN_WIDTH, SCREEN_HEIGHT)
+        return game
 
 CannonApp().run()
