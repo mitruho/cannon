@@ -3,7 +3,7 @@ from kivy.uix.widget import Widget
 from kivy.vector import Vector
 from kivy.clock import Clock
 from kivy.core.window import Window
-from kivy.properties import NumericProperty, ObjectProperty, BooleanProperty
+from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProperty, BooleanProperty
 import math
 from cannon_constants import *
 
@@ -33,12 +33,13 @@ class Cannon(Widget):
 class Projectile(Widget):
     projectile_height = BULLET_RADIUS * 2
     projectile_width = BULLET_RADIUS * 2
-    x_velocity = NumericProperty(0)
-    y_velocity = NumericProperty(0)
-    gravity = 9.81  # gravitational acceleration in m/s^2
-    time = 0
-    launch_speed = BULLET_MAX_VEL
-    visible = BooleanProperty(False)
+    vel_x = NumericProperty(0)
+    vel_y = NumericProperty(0)
+    vel = ReferenceListProperty(vel_x, vel_y)
+    gravity_x = NumericProperty(0)
+    gravity_y = NumericProperty(-9.8)
+    acceleration = ReferenceListProperty(gravity_x, gravity_y)
+    launch_speed = BOMB_MAX_VEL
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -50,9 +51,8 @@ class Projectile(Widget):
 
     def start_moving(self, launch_angle, start_x, start_y):
         self.launch_angle_radians = math.radians(launch_angle)
-        self.x_velocity = self.launch_speed * math.cos(self.launch_angle_radians)
-        self.y_velocity = self.launch_speed * math.sin(self.launch_angle_radians)
-        self.time = 0  # reset time
+        self.vel_x = self.launch_speed * math.cos(self.launch_angle_radians)
+        self.vel_y = self.launch_speed * math.sin(self.launch_angle_radians)
         self.x = start_x
         self.y = start_y
         self.visible = True
@@ -64,19 +64,19 @@ class Projectile(Widget):
             self._clock_event = None
 
     def move(self, dt):
-        self.time += dt
+         # Update velocity with acceleration (gravity)
+        self.vel = Vector(*self.vel) + Vector(*self.acceleration) * dt
+        print(self.vel)
+        # Update position with velocity
+        self.pos = Vector(*self.pos) + Vector(*self.vel) * dt
+        print(self.x)
 
-        # Update position based on velocity and time
-        new_x = self.x_velocity * self.time
-        new_y = self.y_velocity * self.time - 0.5 * (self.gravity * (self.time ** 2))
+        # Update the widget's position on the screen
+        if self.y < 0:
+            self.y = 0
+            self.vel_y = 0
+            self.vel_x = 0
 
-        # Check if the projectile hits the ground
-        if new_y < 0:
-            new_y = 0
-            self.stop_moving()
-
-        self.x += new_x
-        self.y += new_y
 
 class CannonGame(Widget):
     projectile = ObjectProperty(None)
