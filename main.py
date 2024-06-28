@@ -71,6 +71,7 @@ class Projectile(Widget):
         elif self.projectile_type == 2:
             self.projectile_width, self.projectile_height = (5, 5)
             self.launch_speed = LASER_VEL
+            self.gravity_y = 0
 
     def start_moving(self, launch_angle, start_x, start_y):
         self.reset_movement()
@@ -135,6 +136,10 @@ class MenuScreen(Screen):
         btn_bomb.bind(on_release=self.switch_to_bomb)
         self.dropdown.add_widget(btn_bomb)
 
+        btn_laser = Button(text='Switch to Laser', size_hint_y=None, height=44)
+        btn_laser.bind(on_release=self.switch_to_laser)
+        self.dropdown.add_widget(btn_laser)
+
         main_button = Button(text='Type of projectile', size_hint=(1, None), height=44)
         main_button.bind(on_release=self.dropdown.open)
         self.layout.add_widget(main_button)
@@ -156,6 +161,13 @@ class MenuScreen(Screen):
     def switch_to_bomb(self, *args):
         game = self.layout.children[0]
         game.projectile.projectile_type = 1
+        game.projectile.update_size()
+        game.times_launched = 0
+        self.dropdown.dismiss()
+
+    def switch_to_laser(self, *args):
+        game = self.layout.children[0]
+        game.projectile.projectile_type = 2
         game.projectile.update_size()
         game.times_launched = 0
         self.dropdown.dismiss()
