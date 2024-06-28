@@ -58,6 +58,7 @@ class Projectile(Widget):
         self.update_size()
 
     def on_projectile_type(self, instance, value):
+        self.reset_movement()
         self.update_size()
 
     def update_size(self):
@@ -125,23 +126,16 @@ class MenuScreen(Screen):
         self.layout = BoxLayout(orientation='vertical')
 
         self.dropdown = DropDown()
-        
-        # Button to toggle Single Window Mode
-        btn_single_window = Button(text='Single Window Mode', size_hint_y=None, height=44)
-        btn_single_window.bind(on_release=self.toggle_single_window)
-        self.dropdown.add_widget(btn_single_window)
 
-        # Button to switch to Bullet
         btn_bullet = Button(text='Switch to Bullet', size_hint_y=None, height=44)
         btn_bullet.bind(on_release=self.switch_to_bullet)
         self.dropdown.add_widget(btn_bullet)
 
-        # Button to switch to Bomb
         btn_bomb = Button(text='Switch to Bomb', size_hint_y=None, height=44)
         btn_bomb.bind(on_release=self.switch_to_bomb)
         self.dropdown.add_widget(btn_bomb)
 
-        main_button = Button(text='Menu', size_hint=(None, None), height=44)
+        main_button = Button(text='Type of projectile', size_hint=(1, None), height=44)
         main_button.bind(on_release=self.dropdown.open)
         self.layout.add_widget(main_button)
 
