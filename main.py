@@ -65,9 +65,11 @@ class Projectile(Widget):
         if self.projectile_type == 0:
             self.projectile_width, self.projectile_height = BULLET_SIZE
             self.launch_speed = BULLET_MAX_VEL
+            self.gravity_y = -9.8
         elif self.projectile_type == 1:
             self.projectile_width, self.projectile_height = BOMB_SIZE
             self.launch_speed = BOMB_MAX_VEL
+            self.gravity_y = -9.8
         elif self.projectile_type == 2:
             self.projectile_width, self.projectile_height = (5, 5)
             self.launch_speed = LASER_VEL
@@ -80,7 +82,6 @@ class Projectile(Widget):
         self.vel_y = self.launch_speed * math.sin(self.launch_angle_radians)
         self.x = start_x
         self.y = start_y
-        self.visible = True
         self._clock_event = Clock.schedule_interval(self.move, 1 / FPS)  # Update at FPS rate
 
     def stop_moving(self):
@@ -94,14 +95,13 @@ class Projectile(Widget):
         self.y = -100
         self.vel_x = 0
         self.vel_y = 0
-        self.visible = False
 
     def move(self, dt):
         # Update velocity with acceleration (gravity)
         self.vel = Vector(*self.vel) + Vector(*self.acceleration) * dt
         # Update position with velocity
         self.pos = Vector(*self.pos) + Vector(*self.vel) * dt
-
+        print(self.vel_y)
         # Update the widget's position on the screen
         if self.y < 0:
             self.y = 0
