@@ -130,11 +130,13 @@ class ScoreboardScreen(Screen):
         super(ScoreboardScreen, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation='vertical')
 
-        back_button = Button(text='Back', size_hint=(1, None), height=44)
+        top_layout = BoxLayout(orientation='horizontal', size_hint_y=0.15)
+        back_button = Button(text='Back', size_hint=(1, None))
         back_button.bind(on_release=self.go_back)
-        self.layout.add_widget(back_button)
-
-        self.layout.add_widget(Label(text='Scoreboard'))
+        top_layout.add_widget(back_button)
+        top_layout.add_widget(Label(text='Scoreboard'))
+        self.layout.add_widget(top_layout)
+        self.layout.add_widget(Label(text='scores'))
 
         self.add_widget(self.layout)
 
@@ -152,7 +154,7 @@ class NicknameScreen(Screen):
         self.nickname_input = TextInput(multiline=False)
         input_layout.add_widget(self.nickname_input)
         self.layout.add_widget(input_layout)
-        
+
         buttons_layout = BoxLayout(orientation='horizontal')
         back_button = Button(text='Back')
         back_button.bind(on_release=self.go_back)
@@ -178,7 +180,6 @@ class MenuScreen(Screen):
     def __init__(self, **kwargs):
         super(MenuScreen, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation='horizontal', size_hint=(1, None), height=50)
-
         self.dropdown = DropDown()
 
         btn_bullet = Button(text='Switch to Bullet', size_hint_y=None, height=44)
@@ -238,7 +239,7 @@ class MenuScreen(Screen):
         self.dropdown.dismiss()
 
     def show_best_players(self, *args):
-        self.manager.current = 'foo'
+        self.manager.current = 'scoreboard'
 
     def show_set_nickname(self, *args):
         self.manager.current = 'nickname'
@@ -248,7 +249,7 @@ class CannonApp(App):
         Window.size = (SCREEN_WIDTH, SCREEN_HEIGHT)
         sm = ScreenManager()
         sm.add_widget(MenuScreen(name='menu'))
-        sm.add_widget(ScoreboardScreen(name='hello'))
+        sm.add_widget(ScoreboardScreen(name='scoreboard'))
         sm.add_widget(NicknameScreen(name='nickname'))
         return sm
 
