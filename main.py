@@ -7,6 +7,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.vector import Vector
 from kivy.clock import Clock
 from kivy.core.window import Window
+from kivy.uix.label import Label
 from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProperty
 import math
 from cannon_constants import *
@@ -121,10 +122,27 @@ class CannonGame(Widget):
                 self.times_launched += 1
         return super().on_touch_down(touch)
 
+class ScoreboardScreen(Screen):
+    def __init__(self, **kwargs):
+        super(ScoreboardScreen, self).__init__(**kwargs)
+        self.layout = BoxLayout(orientation='vertical')
+
+        # Add a back button at the top
+        back_button = Button(text='Back', size_hint=(1, None), height=44)
+        back_button.bind(on_release=self.go_back)
+        self.layout.add_widget(back_button)
+
+        self.layout.add_widget(Label(text='Scoreboard'))
+
+        self.add_widget(self.layout)
+
+    def go_back(self, *args):
+        self.manager.current = 'menu'
+
 class MenuScreen(Screen):
     def __init__(self, **kwargs):
         super(MenuScreen, self).__init__(**kwargs)
-        self.layout = BoxLayout(orientation='vertical')
+        self.layout = BoxLayout(orientation='horizontal', size_hint=(1, None), height=50)
 
         self.dropdown = DropDown()
 
@@ -140,43 +158,56 @@ class MenuScreen(Screen):
         btn_laser.bind(on_release=self.switch_to_laser)
         self.dropdown.add_widget(btn_laser)
 
-        main_button = Button(text='Type of projectile', size_hint=(1, None), height=44)
+        main_button = Button(text='Type of projectile', size_hint=(None, 1), width=150)
         main_button.bind(on_release=self.dropdown.open)
         self.layout.add_widget(main_button)
 
-        self.layout.add_widget(CannonGame())
-        self.add_widget(self.layout)
+        # Add the new button to navigate to the Hello screen
+        best_players_button = Button(text='Best Players', size_hint=(None, 1), width=150)
+        best_players_button.bind(on_release=self.show_best_players)
+        self.layout.add_widget(best_players_button)
+
+        self.main_layout = BoxLayout(orientation='vertical')
+        self.main_layout.add_widget(self.layout)
+        self.cannon_game = CannonGame()
+        self.main_layout.add_widget(self.cannon_game)
+
+        self.add_widget(self.main_layout)
 
     def toggle_single_window(self, *args):
         Window.size = (SCREEN_WIDTH, SCREEN_HEIGHT)
         self.dropdown.dismiss()
 
     def switch_to_bullet(self, *args):
-        game = self.layout.children[0]
+        game = self.cannon_game
         game.projectile.projectile_type = 0
         game.projectile.update_size()
         game.times_launched = 0
         self.dropdown.dismiss()
 
     def switch_to_bomb(self, *args):
-        game = self.layout.children[0]
+        game = self.cannon_game
         game.projectile.projectile_type = 1
         game.projectile.update_size()
         game.times_launched = 0
         self.dropdown.dismiss()
 
     def switch_to_laser(self, *args):
-        game = self.layout.children[0]
+        game = self.cannon_game
         game.projectile.projectile_type = 2
         game.projectile.update_size()
         game.times_launched = 0
         self.dropdown.dismiss()
+
+    def show_best_players(self, *args):
+        self.manager.current = 'hello'
 
 class CannonApp(App):
     def build(self):
         Window.size = (SCREEN_WIDTH, SCREEN_HEIGHT)
         sm = ScreenManager()
         sm.add_widget(MenuScreen(name='menu'))
+        sm.add_widget(ScoreboardScreen(name='hello'))
         return sm
 
 if __name__ == '__main__':
