@@ -28,11 +28,10 @@
         id: projectile
     Target:
         id: target
-        size: 20, 20
         pos: self.parent.width - 120, self.parent.height / 2 - 10
 
 <Target@Widget>:
     canvas:
         Ellipse:
-            size: self.size
+            size: self.height, self.width
             pos: self.pos

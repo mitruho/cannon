@@ -30,7 +30,8 @@ class Cannon(Widget):
         return self.y + self.cannon_height * math.sin(math.radians(self.angle))
 
 class Target(Widget):
-    pass
+    height = NumericProperty(50)
+    width = NumericProperty(50)
 
 BULLET_SIZE = (BULLET_RADIUS*2, BULLET_RADIUS*2)
 BOMB_SIZE = (BOMB_RADIUS*2, BOMB_RADIUS*2)
@@ -117,4 +118,3 @@ class CannonGame(Widget):
                 self.projectile.start_moving(self.cannon.angle, self.cannon.end_x, self.cannon.end_y)
                 self.times_launched += 1
         return super().on_touch_down(touch)
-
