@@ -18,9 +18,16 @@
             size: self.size
     canvas.after:
         PopMatrix
+
+<Target>:
+    canvas:
+        Ellipse:
+            size: self.height, self.width
+            pos: self.x, self.y
 <CannonGame>:
     cannon: cannon
     projectile: projectile
+    target: target
     Cannon:
         id: cannon
         angle: 0
@@ -28,10 +35,4 @@
         id: projectile
     Target:
         id: target
-        pos: self.parent.width - 120, self.parent.height / 2 - 10
 
-<Target@Widget>:
-    canvas:
-        Ellipse:
-            size: self.height, self.width
-            pos: self.pos

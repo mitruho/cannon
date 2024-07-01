@@ -3,6 +3,7 @@ from kivy.vector import Vector
 from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProperty
+from kivy.app import App
 import math
 from cannon_constants import *
 
@@ -32,6 +33,10 @@ class Cannon(Widget):
 class Target(Widget):
     height = NumericProperty(50)
     width = NumericProperty(50)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.x = Window.width * 4/5
+        self.y = 100
 
 BULLET_SIZE = (BULLET_RADIUS*2, BULLET_RADIUS*2)
 BOMB_SIZE = (BOMB_RADIUS*2, BOMB_RADIUS*2)
@@ -98,14 +103,16 @@ class Projectile(Widget):
     def move(self, dt):
         self.vel = Vector(*self.vel) + Vector(*self.acceleration) * dt
         self.pos = Vector(*self.pos) + Vector(*self.vel) * dt
-
         print(self.vel_y)
+
+        # Check for collision with target
+        if self.parent and self.parent.check_collision(self):
+            self.stop_moving()
 
         if self.y < 0:
             self.y = 0
             self.vel_y = 0
             self.vel_x = 0
-
 class CannonGame(Widget):
     projectile = ObjectProperty(None)
     cannon = ObjectProperty(None)
@@ -118,3 +125,28 @@ class CannonGame(Widget):
                 self.projectile.start_moving(self.cannon.angle, self.cannon.end_x, self.cannon.end_y)
                 self.times_launched += 1
         return super().on_touch_down(touch)
+
+    def check_collision(self, projectile):
+        # Calculate the center of the projectile
+        projectile_center_x = projectile.x + projectile.width / 2
+        projectile_center_y = projectile.y + projectile.height / 2
+        projectile_radius = projectile.width / 2  # Assuming the projectile is circular
+
+        # Calculate the center of the target
+        target_center_x = self.target.x + self.target.width / 2
+        target_center_y = self.target.y + self.target.height / 2
+        target_radius = self.target.width / 2  # Assuming the target is circular
+
+        # Calculate the distance between the centers
+        distance = math.sqrt((target_center_x - projectile_center_x) ** 2 +
+                             (target_center_y - projectile_center_y) ** 2)
+
+        # Check if the distance is less than the sum of the radii
+        if distance < (projectile_radius + target_radius):
+            self.on_collision()
+            return True
+        return False
+
+    def on_collision(self):
+        print("Collision detected!")
+        # Add any additional collision response logic here
