@@ -8,7 +8,8 @@ from kivy.vector import Vector
 from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.uix.label import Label
-from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProperty
+from kivy.uix.textinput import TextInput
+from kivy.properties import NumericProperty, StringProperty, ReferenceListProperty, ObjectProperty
 import math
 from cannon_constants import *
 
@@ -86,7 +87,7 @@ class Projectile(Widget):
         self.vel_y = self.launch_speed * math.sin(self.launch_angle_radians)
         self.x = start_x
         self.y = start_y
-        self._clock_event = Clock.schedule_interval(self.move, 1 / FPS)  # Update at FPS rate
+        self._clock_event = Clock.schedule_interval(self.move, 1 / FPS)
 
     def stop_moving(self):
         if self._clock_event:
@@ -140,6 +141,39 @@ class ScoreboardScreen(Screen):
     def go_back(self, *args):
         self.manager.current = 'menu'
 
+class NicknameScreen(Screen):
+    def __init__(self, **kwargs):
+        super(NicknameScreen, self).__init__(**kwargs)
+        self.layout = BoxLayout(orientation='vertical')
+
+        self.layout.add_widget(Label(text='Set Your Nickname'))
+
+        input_layout = BoxLayout(orientation='vertical', padding=50)  # Wrapper layout with padding
+        self.nickname_input = TextInput(multiline=False)
+        input_layout.add_widget(self.nickname_input)
+        self.layout.add_widget(input_layout)
+        
+        buttons_layout = BoxLayout(orientation='horizontal')
+        back_button = Button(text='Back')
+        back_button.bind(on_release=self.go_back)
+        buttons_layout.add_widget(back_button)
+        self.layout.add_widget(buttons_layout)
+
+
+        set_button = Button(text='Set Nickname')
+        set_button.bind(on_release=self.set_nickname)
+        buttons_layout.add_widget(set_button)
+
+        self.add_widget(self.layout)
+
+    def set_nickname(self, *args):
+        nickname = self.nickname_input.text
+        print(f"Nickname set to: {nickname}")
+        # Implement any additional logic to store or use the nickname
+
+    def go_back(self, *args):
+        self.manager.current = 'menu'
+
 class MenuScreen(Screen):
     def __init__(self, **kwargs):
         super(MenuScreen, self).__init__(**kwargs)
@@ -166,6 +200,10 @@ class MenuScreen(Screen):
         best_players_button = Button(text='Best Players', size_hint=(None, 1), width=150)
         best_players_button.bind(on_release=self.show_best_players)
         self.layout.add_widget(best_players_button)
+
+        set_nickname_button = Button(text='Set Nickname', size_hint=(None, 1), width=150)
+        set_nickname_button.bind(on_release=self.show_set_nickname)
+        self.layout.add_widget(set_nickname_button)
 
         self.main_layout = BoxLayout(orientation='vertical')
         self.main_layout.add_widget(self.layout)
@@ -200,7 +238,10 @@ class MenuScreen(Screen):
         self.dropdown.dismiss()
 
     def show_best_players(self, *args):
-        self.manager.current = 'hello'
+        self.manager.current = 'foo'
+
+    def show_set_nickname(self, *args):
+        self.manager.current = 'nickname'
 
 class CannonApp(App):
     def build(self):
@@ -208,6 +249,7 @@ class CannonApp(App):
         sm = ScreenManager()
         sm.add_widget(MenuScreen(name='menu'))
         sm.add_widget(ScoreboardScreen(name='hello'))
+        sm.add_widget(NicknameScreen(name='nickname'))
         return sm
 
 if __name__ == '__main__':
