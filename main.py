@@ -35,6 +35,9 @@ class Cannon(Widget):
     def end_y(self):
         return self.y + self.cannon_height * math.sin(math.radians(self.angle))
 
+class Target(Widget):
+    pass
+
 BULLET_SIZE = (BULLET_RADIUS*2, BULLET_RADIUS*2)
 BOMB_SIZE = (BOMB_RADIUS*2, BOMB_RADIUS*2)
 
@@ -98,12 +101,11 @@ class Projectile(Widget):
         self.vel_y = 0
 
     def move(self, dt):
-        # Update velocity with acceleration (gravity)
         self.vel = Vector(*self.vel) + Vector(*self.acceleration) * dt
-        # Update position with velocity
         self.pos = Vector(*self.pos) + Vector(*self.vel) * dt
+
         print(self.vel_y)
-        # Update the widget's position on the screen
+
         if self.y < 0:
             self.y = 0
             self.vel_y = 0
@@ -112,10 +114,10 @@ class Projectile(Widget):
 class CannonGame(Widget):
     projectile = ObjectProperty(None)
     cannon = ObjectProperty(None)
+    target = ObjectProperty(None)
     times_launched = 0
 
     def on_touch_down(self, touch):
-        # Check if the touch is within the bounds of the CannonGame widget
         if self.collide_point(*touch.pos):
             if self.times_launched == 0:
                 self.projectile.start_moving(self.cannon.angle, self.cannon.end_x, self.cannon.end_y)
@@ -127,7 +129,6 @@ class ScoreboardScreen(Screen):
         super(ScoreboardScreen, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation='vertical')
 
-        # Add a back button at the top
         back_button = Button(text='Back', size_hint=(1, None), height=44)
         back_button.bind(on_release=self.go_back)
         self.layout.add_widget(back_button)
@@ -162,7 +163,6 @@ class MenuScreen(Screen):
         main_button.bind(on_release=self.dropdown.open)
         self.layout.add_widget(main_button)
 
-        # Add the new button to navigate to the Hello screen
         best_players_button = Button(text='Best Players', size_hint=(None, 1), width=150)
         best_players_button.bind(on_release=self.show_best_players)
         self.layout.add_widget(best_players_button)
