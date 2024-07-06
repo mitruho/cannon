@@ -113,11 +113,13 @@ class Projectile(Widget):
             self.y = 0
             self.vel_y = 0
             self.vel_x = 0
+
 class CannonGame(Widget):
     projectile = ObjectProperty(None)
     cannon = ObjectProperty(None)
     target = ObjectProperty(None)
     times_launched = 0
+    score = NumericProperty(0)  # Add score property
 
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
@@ -127,21 +129,17 @@ class CannonGame(Widget):
         return super().on_touch_down(touch)
 
     def check_collision(self, projectile):
-        # Calculate the center of the projectile
         projectile_center_x = projectile.x + projectile.width / 2
         projectile_center_y = projectile.y + projectile.height / 2
-        projectile_radius = projectile.width / 2  # Assuming the projectile is circular
+        projectile_radius = projectile.width / 2
 
-        # Calculate the center of the target
         target_center_x = self.target.x + self.target.width / 2
         target_center_y = self.target.y + self.target.height / 2
-        target_radius = self.target.width / 2  # Assuming the target is circular
+        target_radius = self.target.width / 2
 
-        # Calculate the distance between the centers
         distance = math.sqrt((target_center_x - projectile_center_x) ** 2 +
                              (target_center_y - projectile_center_y) ** 2)
 
-        # Check if the distance is less than the sum of the radii
         if distance < (projectile_radius + target_radius):
             self.on_collision()
             return True
@@ -149,4 +147,8 @@ class CannonGame(Widget):
 
     def on_collision(self):
         print("Collision detected!")
+        self.score += 1  # Increment score
         # Add any additional collision response logic here
+
+    def get_score(self):
+        return self.score  # Method to get the current score

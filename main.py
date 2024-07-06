@@ -90,12 +90,19 @@ class MenuScreen(Screen):
         set_nickname_button.bind(on_release=self.show_set_nickname)
         self.layout.add_widget(set_nickname_button)
 
+        self.score_label = Label(text='Score: 0', size_hint=(None, 1), width=150)
+        self.layout.add_widget(self.score_label)
+
         self.main_layout = BoxLayout(orientation='vertical')
         self.main_layout.add_widget(self.layout)
         self.cannon_game = CannonGame()
+        self.cannon_game.bind(score=self.update_score)  # Bind the score to update_score method
         self.main_layout.add_widget(self.cannon_game)
 
         self.add_widget(self.main_layout)
+
+    def update_score(self, instance, value):
+        self.score_label.text = f'Score: {value}'
 
     def toggle_single_window(self, *args):
         Window.size = (SCREEN_WIDTH, SCREEN_HEIGHT)
