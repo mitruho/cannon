@@ -8,14 +8,14 @@ class CannonGame(Widget):
     projectile = ObjectProperty(None)
     cannon = ObjectProperty(None)
     target = ObjectProperty(None)
-    times_launched = 0
+    attempts = 3
     score = NumericProperty(0)
 
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
-            if self.times_launched == 0:
+            if self.attempts > 0:
                 self.projectile.start_moving(self.cannon.angle, self.cannon.end_x, self.cannon.end_y)
-                self.times_launched += 1
+                self.attempts -= 1
         return super().on_touch_down(touch)
 
     def check_collision(self, projectile):
