@@ -149,4 +149,9 @@ class CannonGame(Widget):
         self.score += 1
 
     def get_score(self):
-        return self.score 
+        return self.score
+
+    def reset_game(self):
+        self.times_launched = 0
+        self.score = 0
+        self.projectile.reset_movement()

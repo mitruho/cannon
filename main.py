@@ -20,12 +20,16 @@ class ScoreboardScreen(Screen):
         top_layout.add_widget(back_button)
         top_layout.add_widget(Label(text='Scoreboard'))
         self.layout.add_widget(top_layout)
-        self.layout.add_widget(Label(text='scores'))
+        self.scores_label = Label(text='')
+        self.layout.add_widget(self.scores_label)
 
         self.add_widget(self.layout)
 
     def go_back(self, *args):
         self.manager.current = 'menu'
+
+    def update_scores(self, scores):
+        self.scores_label.text = '\n'.join([f'{nickname}: {score}' for nickname, score in scores])
 
 class NicknameScreen(Screen):
     def __init__(self, **kwargs):
@@ -45,7 +49,6 @@ class NicknameScreen(Screen):
         buttons_layout.add_widget(back_button)
         self.layout.add_widget(buttons_layout)
 
-
         set_button = Button(text='Set Nickname')
         set_button.bind(on_release=self.set_nickname)
         buttons_layout.add_widget(set_button)
@@ -54,8 +57,11 @@ class NicknameScreen(Screen):
 
     def set_nickname(self, *args):
         nickname = self.nickname_input.text
+        if not nickname:  # Ensure there's always a nickname
+            nickname = 'player'
         print(f"Nickname set to: {nickname}")
-        # Implement any additional logic to store or use the nickname
+        self.manager.get_screen('menu').set_nickname(nickname)
+        self.go_back()
 
     def go_back(self, *args):
         self.manager.current = 'menu'
@@ -101,8 +107,35 @@ class MenuScreen(Screen):
 
         self.add_widget(self.main_layout)
 
+        self.scores = []
+        self.current_nickname = "player"  # Set default nickname
+
     def update_score(self, instance, value):
         self.score_label.text = f'Score: {value}'
+
+    def set_nickname(self, nickname):
+        if self.current_nickname:
+            # Add the current nickname and score to the scoreboard
+            self.scores.append((self.current_nickname, self.cannon_game.get_score()))
+            # Update the scoreboard to merge scores of the same nickname
+            self.scores = self.merge_scores(self.scores)
+
+        self.current_nickname = nickname
+        self.cannon_game.reset_game()  # Reset game including score and times_launched
+        self.update_score(self, 0)
+        self.update_scoreboard()
+
+    def merge_scores(self, scores):
+        merged_scores = {}
+        for nickname, score in scores:
+            if nickname in merged_scores:
+                merged_scores[nickname] = max(merged_scores[nickname], score)
+            else:
+                merged_scores[nickname] = score
+        return list(merged_scores.items())
+
+    def update_scoreboard(self):
+        self.manager.get_screen('scoreboard').update_scores(self.scores)
 
     def toggle_single_window(self, *args):
         Window.size = (SCREEN_WIDTH, SCREEN_HEIGHT)
