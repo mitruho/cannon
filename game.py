@@ -16,6 +16,7 @@ class CannonGame(Widget):
             if self.attempts > 0:
                 self.projectile.start_moving(self.cannon.angle, self.cannon.end_x, self.cannon.end_y)
                 self.attempts -= 1
+                self.parent.parent.update_attempts(self.attempts)  # Call the update_attempts method
         return super().on_touch_down(touch)
 
     def check_collision(self, projectile):

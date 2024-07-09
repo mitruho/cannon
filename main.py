@@ -6,6 +6,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.core.window import Window
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
+from kivy.graphics import Color, Line
 from game import *
 from cannon_constants import *
 
@@ -70,6 +71,14 @@ class MenuScreen(Screen):
     def __init__(self, **kwargs):
         super(MenuScreen, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation='horizontal', size_hint=(1, None), height=50)
+
+        self.attempts_layout = BoxLayout(orientation='horizontal', size_hint=(None, 1), width=30)
+        self.attempts_indicators = [Label(size_hint=(None, 1), width=10, text="|", color=[0, 1, 1, 1], font_size='38sp') for _ in range(3)]
+        for indicator in self.attempts_indicators:
+            self.attempts_layout.add_widget(indicator)
+
+        self.layout.add_widget(self.attempts_layout)
+
         self.dropdown = DropDown()
 
         btn_bullet = Button(text='Switch to Bullet', size_hint_y=None, height=44)
@@ -133,6 +142,13 @@ class MenuScreen(Screen):
             else:
                 merged_scores[nickname] = score
         return list(merged_scores.items())
+    
+    def update_attempts(self, attempts):
+        for i in range(3):
+            if i < attempts:
+                self.attempts_indicators[i].color = [0, 1, 1, 1]
+            else:
+                self.attempts_indicators[i].color = [0.5, 0.5, 0.5, 1]
 
     def update_scoreboard(self):
         self.manager.get_screen('scoreboard').update_scores(self.scores)
