@@ -103,9 +103,8 @@ class Projectile(Widget):
     def move(self, dt):
         self.vel = Vector(*self.vel) + Vector(*self.acceleration) * dt
         self.pos = Vector(*self.pos) + Vector(*self.vel) * dt
-        print(self.vel_y)
+        print(f'y velocity: {self.vel_y}, x velocity: {self.vel_x}')
 
-        # Check for collision with target
         if self.parent and self.parent.check_collision(self):
             self.stop_moving()
 
@@ -119,7 +118,7 @@ class CannonGame(Widget):
     cannon = ObjectProperty(None)
     target = ObjectProperty(None)
     times_launched = 0
-    score = NumericProperty(0)  # Add score property
+    score = NumericProperty(0)
 
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
@@ -147,8 +146,7 @@ class CannonGame(Widget):
 
     def on_collision(self):
         print("Collision detected!")
-        self.score += 1  # Increment score
-        # Add any additional collision response logic here
+        self.score += 1
 
     def get_score(self):
-        return self.score  # Method to get the current score
+        return self.score 
