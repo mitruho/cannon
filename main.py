@@ -105,6 +105,9 @@ class MenuScreen(Screen):
         set_nickname_button.bind(on_release=self.show_set_nickname)
         self.layout.add_widget(set_nickname_button)
 
+        self.nickname_label = Label(text='Nickname: player', size_hint=(None, 1), width=150)  # Nickname label
+        self.layout.add_widget(self.nickname_label)
+
         self.score_label = Label(text='Score: 0', size_hint=(None, 1), width=150)
         self.layout.add_widget(self.score_label)
 
@@ -130,6 +133,7 @@ class MenuScreen(Screen):
             self.scores = self.merge_scores(self.scores)
 
         self.current_nickname = nickname
+        self.nickname_label.text = f'Nickname: {nickname}'  # Update nickname label
         self.cannon_game.reset_game()  # Reset game including score and times_launched
         self.update_score(self, 0)
         self.update_scoreboard()
