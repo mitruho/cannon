@@ -112,6 +112,7 @@ class Projectile(Widget):
             self.y = 0
             self.vel_y = 0
             self.vel_x = 0
+
 class Brick(Widget):
     destroyed = BooleanProperty(False)
 
@@ -131,10 +132,10 @@ class Brick(Widget):
         self.canvas.clear()
 
 class Wall(Widget):
-    rows = NumericProperty(5)
+    rows = NumericProperty(15)
     columns = NumericProperty(1)
-    brick_width = NumericProperty(60)
-    brick_height = NumericProperty(60)
+    brick_width = NumericProperty(20)
+    brick_height = NumericProperty(10)
     brick_gap = NumericProperty(5)  # Define a small gap between bricks
     bricks = ObjectProperty([])
 
