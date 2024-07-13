@@ -61,6 +61,7 @@ class Projectile(Widget):
         self.x = -100
         self.y = -100
         self.update_size()
+        self.laser_timer = None  # Timer for the laser duration
 
     def on_projectile_type(self, instance, value):
         self.reset_movement()
@@ -91,10 +92,16 @@ class Projectile(Widget):
         self.y = start_y
         self._clock_event = Clock.schedule_interval(self.move, 1 / FPS)
 
-    def stop_moving(self):
+        if self.projectile_type == 2:  # If it's a laser
+            self.laser_timer = Clock.schedule_once(self.stop_moving, LASER_IMPULSE)
+
+    def stop_moving(self, dt=None):
         if self._clock_event:
             Clock.unschedule(self._clock_event)
             self._clock_event = None
+        if self.laser_timer:
+            Clock.unschedule(self.laser_timer)
+            self.laser_timer = None
 
     def reset_movement(self):
         self.stop_moving()
