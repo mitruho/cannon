@@ -52,6 +52,7 @@ class Projectile(Widget):
     gravity_y = NumericProperty(-9.8)
     acceleration = ReferenceListProperty(gravity_x, gravity_y)
     launch_speed = NumericProperty(BOMB_MAX_VEL)
+    penetration_depth = NumericProperty(BOMB_DRILL)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -74,6 +75,7 @@ class Projectile(Widget):
             self.projectile_width, self.projectile_height = BOMB_SIZE
             self.launch_speed = BOMB_MAX_VEL
             self.gravity_y = -9.8
+            self.penetration_depth = BOMB_DRILL
         elif self.projectile_type == 2:
             self.projectile_width, self.projectile_height = (5, 5)
             self.launch_speed = LASER_VEL
@@ -81,6 +83,7 @@ class Projectile(Widget):
 
     def start_moving(self, launch_angle, start_x, start_y):
         self.reset_movement()
+        self.reset_penetration_depth()
         self.launch_angle_radians = math.radians(launch_angle)
         self.vel_x = self.launch_speed * math.cos(self.launch_angle_radians)
         self.vel_y = self.launch_speed * math.sin(self.launch_angle_radians)
@@ -105,13 +108,33 @@ class Projectile(Widget):
         self.pos = Vector(*self.pos) + Vector(*self.vel) * dt
         print(f'y velocity: {self.vel_y}, x velocity: {self.vel_x}')
 
-        if self.parent and self.parent.check_collision(self):
-            self.stop_moving()
+        if self.parent:
+            if self.projectile_type == 1:  # Bomb type
+                self.handle_penetration()
+            else:
+                if self.parent.check_collision(self):
+                    self.stop_moving()
 
         if self.y < 0:
             self.y = 0
             self.vel_y = 0
             self.vel_x = 0
+
+    def handle_penetration(self):
+        remaining_depth = self.penetration_depth
+        while remaining_depth > 0:
+            if self.parent.check_collision(self):
+                self.pos = Vector(*self.pos) + Vector(self.vel_x, self.vel_y) * (1 / FPS)
+                remaining_depth -= 1
+            else:
+                break
+        if remaining_depth <= 0:
+            self.stop_moving()
+        print(remaining_depth)
+
+    def reset_penetration_depth(self):
+        if self.projectile_type == 1:  # Bomb type
+            self.penetration_depth = BOMB_DRILL
 
 class Brick(Widget):
     destroyed = BooleanProperty(False)
@@ -145,9 +168,9 @@ class Wall(Widget):
 
     def set_columns_based_on_score(self, score):
         if score == 1:
-            self.columns = 2
-        elif score >= 2:
             self.columns = 3
+        elif score >= 2:
+            self.columns = 6
         else:
             self.columns = 1
         self.build_wall()
@@ -165,8 +188,13 @@ class Wall(Widget):
                 self.add_widget(brick)
 
     def check_collision(self, projectile):
+        collision_detected = False
         for brick in self.bricks:
             if not brick.destroyed and brick.collide_widget(projectile):
                 brick.destroy()
-                return True
-        return False
+                collision_detected = True
+                if projectile.projectile_type == 1:  # Bomb type
+                    projectile.penetration_depth -= 1  # Decrease penetration depth
+                    if projectile.penetration_depth <= 0:
+                        return True  # Stop checking further collisions if penetration depth is exhausted
+        return collision_detected
