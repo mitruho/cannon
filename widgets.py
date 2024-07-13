@@ -131,10 +131,11 @@ class Brick(Widget):
         self.canvas.clear()
 
 class Wall(Widget):
-    rows = NumericProperty(10)
+    rows = NumericProperty(5)
     columns = NumericProperty(1)
     brick_width = NumericProperty(60)
     brick_height = NumericProperty(60)
+    brick_gap = NumericProperty(5)  # Define a small gap between bricks
     bricks = ObjectProperty([])
 
     def __init__(self, **kwargs):
@@ -147,7 +148,9 @@ class Wall(Widget):
         for row in range(self.rows):
             for col in range(self.columns):
                 brick = Brick(size=(self.brick_width, self.brick_height))
-                brick.pos = (self.x + col * self.brick_width, self.y + row * self.brick_height)
+                # Adjust brick position to include the gap
+                brick.pos = (self.x + col * (self.brick_width + self.brick_gap), 
+                             self.y + row * (self.brick_height + self.brick_gap))
                 self.bricks.append(brick)
                 self.add_widget(brick)
 
