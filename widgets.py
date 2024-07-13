@@ -3,8 +3,9 @@ from kivy.uix.widget import Widget
 from kivy.vector import Vector
 from kivy.clock import Clock
 from kivy.core.window import Window
-from kivy.properties import ReferenceListProperty, NumericProperty
+from kivy.properties import ReferenceListProperty, NumericProperty, BooleanProperty, ObjectProperty
 from cannon_constants import *
+from kivy.graphics import Rectangle, Color
 
 class Cannon(Widget):
     angle = NumericProperty(0)
@@ -111,3 +112,48 @@ class Projectile(Widget):
             self.y = 0
             self.vel_y = 0
             self.vel_x = 0
+class Brick(Widget):
+    destroyed = BooleanProperty(False)
+
+    def __init__(self, **kwargs):
+        super(Brick, self).__init__(**kwargs)
+        with self.canvas:
+            Color(0.5, 0.5, 0.5, 1)  # Red color for the bricks
+            self.rect = Rectangle(size=(self.width, self.height), pos=self.pos)
+        self.bind(pos=self.update_rect, size=self.update_rect)
+
+    def update_rect(self, *args):
+        self.rect.pos = self.pos
+        self.rect.size = self.size
+
+    def destroy(self):
+        self.destroyed = True
+        self.canvas.clear()
+
+class Wall(Widget):
+    rows = NumericProperty(10)
+    columns = NumericProperty(1)
+    brick_width = NumericProperty(60)
+    brick_height = NumericProperty(60)
+    bricks = ObjectProperty([])
+
+    def __init__(self, **kwargs):
+        super(Wall, self).__init__(**kwargs)
+        self.build_wall()
+
+    def build_wall(self):
+        self.clear_widgets()
+        self.bricks = []
+        for row in range(self.rows):
+            for col in range(self.columns):
+                brick = Brick(size=(self.brick_width, self.brick_height))
+                brick.pos = (self.x + col * self.brick_width, self.y + row * self.brick_height)
+                self.bricks.append(brick)
+                self.add_widget(brick)
+
+    def check_collision(self, projectile):
+        for brick in self.bricks:
+            if not brick.destroyed and brick.collide_widget(projectile):
+                brick.destroy()
+                return True
+        return False

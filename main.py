@@ -6,7 +6,6 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.core.window import Window
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
-from kivy.graphics import Color, Line
 from game import *
 from cannon_constants import *
 
@@ -134,7 +133,7 @@ class MenuScreen(Screen):
 
         self.current_nickname = nickname
         self.nickname_label.text = f'Nickname: {nickname}'  # Update nickname label
-        self.cannon_game.reset_game()  # Reset game including score and times_launched
+        self.cannon_game.reset_game(True)  # Reset game including score and times_launched
         self.update_score(self, 0)
         self.update_scoreboard()
 
