@@ -142,6 +142,15 @@ class Wall(Widget):
         super(Wall, self).__init__(**kwargs)
         self.build_wall()
 
+    def set_columns_based_on_score(self, score):
+        if score == 1:
+            self.columns = 2
+        elif score >= 2:
+            self.columns = 3
+        else:
+            self.columns = 1
+        self.build_wall()
+
     def build_wall(self):
         self.clear_widgets()
         self.bricks = []

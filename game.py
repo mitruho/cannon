@@ -49,6 +49,7 @@ class CannonGame(Widget):
     def on_collision(self):
         print("Collision detected!")
         self.score += 1
+        self.wall.set_columns_based_on_score(self.score)  # Adjust the wall columns based on score
         self.reset_game(True)
 
     def get_score(self):
@@ -60,4 +61,4 @@ class CannonGame(Widget):
             self.score = 0
         self.projectile.reset_movement()
         self.parent.parent.update_attempts(self.attempts)
-        self.wall.build_wall()  # Rebuild the wall on game reset
+        self.wall.set_columns_based_on_score(self.score)  # Adjust the wall columns based on score
