@@ -133,7 +133,7 @@ class MenuScreen(Screen):
 
         self.current_nickname = nickname
         self.nickname_label.text = f'Nickname: {nickname}'  # Update nickname label
-        self.cannon_game.reset_game(True)  # Reset game including score and times_launched
+        self.cannon_game.reset_game(False)  # Reset game including score and times_launched
         self.update_score(self, 0)
         self.update_scoreboard()
 

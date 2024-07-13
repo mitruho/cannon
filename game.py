@@ -49,14 +49,14 @@ class CannonGame(Widget):
     def on_collision(self):
         print("Collision detected!")
         self.score += 1
-        self.reset_game(False)
+        self.reset_game(True)
 
     def get_score(self):
         return self.score
 
-    def reset_game(self, game_over):
+    def reset_game(self, victory):
         self.attempts = 3
-        if game_over == True:
+        if not victory:
             self.score = 0
         self.projectile.reset_movement()
         self.parent.parent.update_attempts(self.attempts)
