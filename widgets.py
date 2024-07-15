@@ -54,6 +54,7 @@ class Projectile(Widget):
     launch_speed = NumericProperty(BOMB_MAX_VEL)
     penetration_depth = NumericProperty(BOMB_DRILL)
 
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.launch_angle_radians = 0
@@ -61,8 +62,8 @@ class Projectile(Widget):
         self.x = -100
         self.y = -100
         self.update_size()
-        self.laser_timer = None  # Timer for the laser duration
-
+        self.laser_timer = None
+        
     def on_projectile_type(self, instance, value):
         self.reset_movement()
         self.update_size()
@@ -78,9 +79,10 @@ class Projectile(Widget):
             self.gravity_y = -9.8
             self.penetration_depth = BOMB_DRILL
         elif self.projectile_type == 2:
-            self.projectile_width, self.projectile_height = (5, 5)
+            self.projectile_width, self.projectile_height = (10, 10)
             self.launch_speed = LASER_VEL
             self.gravity_y = 0
+            self.penetration_depth = LASER_IMPULSE
 
     def start_moving(self, launch_angle, start_x, start_y):
         self.reset_movement()
@@ -92,7 +94,7 @@ class Projectile(Widget):
         self.y = start_y
         self._clock_event = Clock.schedule_interval(self.move, 1 / FPS)
 
-        if self.projectile_type == 2:  # If it's a laser
+        if self.projectile_type == 2:
             self.laser_timer = Clock.schedule_once(self.stop_moving, LASER_IMPULSE)
 
     def stop_moving(self, dt=None):
@@ -113,11 +115,11 @@ class Projectile(Widget):
     def move(self, dt):
         self.vel = Vector(*self.vel) + Vector(*self.acceleration) * dt
         self.pos = Vector(*self.pos) + Vector(*self.vel) * dt
-        print(f'y velocity: {self.vel_y}, x velocity: {self.vel_x}')
+        # print(f'y velocity: {self.vel_y}, x velocity: {self.vel_x}')
 
         if self.parent:
-            if self.projectile_type == 1:  # Bomb type
-                self.handle_penetration()
+            if self.projectile_type in (1, 2):
+                self.handle_drill()
             else:
                 if self.parent.check_collision(self):
                     self.stop_moving()
@@ -127,21 +129,17 @@ class Projectile(Widget):
             self.vel_y = 0
             self.vel_x = 0
 
-    def handle_penetration(self):
-        remaining_depth = self.penetration_depth
-        while remaining_depth > 0:
-            if self.parent.check_collision(self):
-                self.pos = Vector(*self.pos) + Vector(self.vel_x, self.vel_y) * (1 / FPS)
-                remaining_depth -= 1
-            else:
-                break
-        if remaining_depth <= 0:
-            self.stop_moving()
-        print(remaining_depth)
+    def handle_drill(self):
+        if self.parent.check_collision(self):
+            self.penetration_depth -= 1
+            if self.penetration_depth <= 0:
+                self.stop_moving()
 
     def reset_penetration_depth(self):
-        if self.projectile_type == 1:  # Bomb type
+        if self.projectile_type == 1:  # Bomb
             self.penetration_depth = BOMB_DRILL
+        elif self.projectile_type == 2:  # Laser
+            self.penetration_depth = LASER_IMPULSE
 
 class Brick(Widget):
     destroyed = BooleanProperty(False)
@@ -166,7 +164,7 @@ class Wall(Widget):
     columns = NumericProperty(1)
     brick_width = NumericProperty(20)
     brick_height = NumericProperty(10)
-    brick_gap = NumericProperty(5)  # Define a small gap between bricks
+    brick_gap = NumericProperty(5)
     bricks = ObjectProperty([])
 
     def __init__(self, **kwargs):
@@ -200,8 +198,8 @@ class Wall(Widget):
             if not brick.destroyed and brick.collide_widget(projectile):
                 brick.destroy()
                 collision_detected = True
-                if projectile.projectile_type == 1:  # Bomb type
-                    projectile.penetration_depth -= 1  # Decrease penetration depth
+                if projectile.projectile_type in (1, 2) :
+                    projectile.penetration_depth -= 1
                     if projectile.penetration_depth <= 0:
-                        return True  # Stop checking further collisions if penetration depth is exhausted
+                        return True
         return collision_detected

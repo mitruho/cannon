@@ -14,8 +14,7 @@ class CannonGame(Widget):
 
     def __init__(self, **kwargs):
         super(CannonGame, self).__init__(**kwargs)
-        # Set the position of the wall (x, y). Adjust these values as needed.
-        self.wall = Wall(pos=(self.width * 5, 0))  # Example position
+        self.wall = Wall(pos=(self.width * 5, 0))
         self.add_widget(self.wall)
 
     def on_touch_down(self, touch):
@@ -23,7 +22,7 @@ class CannonGame(Widget):
             if self.attempts > 0:
                 self.projectile.start_moving(self.cannon.angle, self.cannon.end_x, self.cannon.end_y)
                 self.attempts -= 1
-                self.parent.parent.update_attempts(self.attempts)  # Call the update_attempts method
+                self.parent.parent.update_attempts(self.attempts)
         return super().on_touch_down(touch)
 
     def check_collision(self, projectile):
@@ -49,7 +48,7 @@ class CannonGame(Widget):
     def on_collision(self):
         print("Collision detected!")
         self.score += 1
-        self.wall.set_columns_based_on_score(self.score)  # Adjust the wall columns based on score
+        self.wall.set_columns_based_on_score(self.score)
         self.reset_game(True)
 
     def get_score(self):
@@ -61,4 +60,4 @@ class CannonGame(Widget):
             self.score = 0
         self.projectile.reset_movement()
         self.parent.parent.update_attempts(self.attempts)
-        self.wall.set_columns_based_on_score(self.score)  # Adjust the wall columns based on score
+        self.wall.set_columns_based_on_score(self.score)

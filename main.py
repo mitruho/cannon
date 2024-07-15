@@ -38,7 +38,7 @@ class NicknameScreen(Screen):
 
         self.layout.add_widget(Label(text='Set Your Nickname'))
 
-        input_layout = BoxLayout(orientation='vertical', padding=50)  # Wrapper layout with padding
+        input_layout = BoxLayout(orientation='vertical', padding=50)
         self.nickname_input = TextInput(multiline=False)
         input_layout.add_widget(self.nickname_input)
         self.layout.add_widget(input_layout)
@@ -57,7 +57,7 @@ class NicknameScreen(Screen):
 
     def set_nickname(self, *args):
         nickname = self.nickname_input.text
-        if not nickname:  # Ensure there's always a nickname
+        if not nickname:
             nickname = 'player'
         print(f"Nickname set to: {nickname}")
         self.manager.get_screen('menu').set_nickname(nickname)
@@ -113,27 +113,25 @@ class MenuScreen(Screen):
         self.main_layout = BoxLayout(orientation='vertical')
         self.main_layout.add_widget(self.layout)
         self.cannon_game = CannonGame()
-        self.cannon_game.bind(score=self.update_score)  # Bind the score to update_score method
+        self.cannon_game.bind(score=self.update_score)
         self.main_layout.add_widget(self.cannon_game)
 
         self.add_widget(self.main_layout)
 
         self.scores = []
-        self.current_nickname = "player"  # Set default nickname
+        self.current_nickname = "player"  # default nickname
 
     def update_score(self, instance, value):
         self.score_label.text = f'Score: {value}'
 
     def set_nickname(self, nickname):
         if self.current_nickname:
-            # Add the current nickname and score to the scoreboard
             self.scores.append((self.current_nickname, self.cannon_game.get_score()))
-            # Update the scoreboard to merge scores of the same nickname
             self.scores = self.merge_scores(self.scores)
 
         self.current_nickname = nickname
-        self.nickname_label.text = f'Nickname: {nickname}'  # Update nickname label
-        self.cannon_game.reset_game(False)  # Reset game including score and times_launched
+        self.nickname_label.text = f'Nickname: {nickname}'
+        self.cannon_game.reset_game(False)
         self.update_score(self, 0)
         self.update_scoreboard()
 
