@@ -172,6 +172,23 @@ class Perpetio(Widget):
             collision_detected = True
         return collision_detected
 
+class Mirror(Widget):
+
+    def __init__(self, **kwargs):
+        super(Mirror, self).__init__(**kwargs)
+        with self.canvas:
+            Color(1, 1, 1, 1)
+            self.rect = Rectangle(size=(self.width, self.height), pos=self.pos)
+
+    def check_collision(self, projectile):
+        collision_detected = False
+        if self.collide_widget(projectile):
+            if projectile.projectile_type == 2:
+                projectile.vel_x = -projectile.vel_x
+            else:
+                collision_detected = True
+        return collision_detected
+
     
 class Wall(Widget):
     rows = NumericProperty(15)
