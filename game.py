@@ -15,7 +15,9 @@ class CannonGame(Widget):
     def __init__(self, **kwargs):
         super(CannonGame, self).__init__(**kwargs)
         self.wall = Wall(pos=(self.width * 5, 0))
+        self.perpetio = Perpetio(pos=(self.width *3,0), size=(100, 100))
         self.add_widget(self.wall)
+        self.add_widget(self.perpetio)
 
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
@@ -27,6 +29,8 @@ class CannonGame(Widget):
 
     def check_collision(self, projectile):
         if self.wall.check_collision(projectile):
+            return True
+        elif self.perpetio.check_collision(projectile):
             return True
 
         projectile_center_x = projectile.x + projectile.width / 2

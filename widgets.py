@@ -147,7 +147,7 @@ class Brick(Widget):
     def __init__(self, **kwargs):
         super(Brick, self).__init__(**kwargs)
         with self.canvas:
-            Color(0.5, 0.5, 0.5, 1)  # Red color for the bricks
+            Color(0.5, 0.5, 0.5, 1)
             self.rect = Rectangle(size=(self.width, self.height), pos=self.pos)
         self.bind(pos=self.update_rect, size=self.update_rect)
 
@@ -159,6 +159,20 @@ class Brick(Widget):
         self.destroyed = True
         self.canvas.clear()
 
+class Perpetio(Widget):
+    def __init__(self, **kwargs):
+        super(Perpetio, self).__init__(**kwargs)
+        with self.canvas:
+            Color(1, 1, 1, 1)
+            self.rect = Rectangle(size=(self.width, self.height), pos=self.pos)
+
+    def check_collision(self, projectile):
+        collision_detected = False
+        if self.collide_widget(projectile):
+            collision_detected = True
+        return collision_detected
+
+    
 class Wall(Widget):
     rows = NumericProperty(15)
     columns = NumericProperty(1)
@@ -186,7 +200,7 @@ class Wall(Widget):
         for row in range(self.rows):
             for col in range(self.columns):
                 brick = Brick(size=(self.brick_width, self.brick_height))
-                # Adjust brick position to include the gap
+                # gap
                 brick.pos = (self.x + col * (self.brick_width + self.brick_gap), 
                              self.y + row * (self.brick_height + self.brick_gap))
                 self.bricks.append(brick)
