@@ -15,7 +15,7 @@ class CannonGame(Widget):
     def __init__(self, **kwargs):
         super(CannonGame, self).__init__(**kwargs)
         self.wall = Wall(pos=(self.width * 5, 0))
-        self.perpetio = Perpetio(pos=(self.width *3,0), size=(100, 100))
+        self.perpetio = Perpetio(pos=(self.width * 3, 0), size=(100, 100))
         self.add_widget(self.wall)
         self.add_widget(self.perpetio)
 
