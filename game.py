@@ -1,4 +1,5 @@
 import math
+from kivy.uix.image import Image
 from kivy.uix.widget import Widget
 from kivy.properties import NumericProperty, ObjectProperty
 from kivy.app import App
@@ -14,12 +15,19 @@ class CannonGame(Widget):
 
     def __init__(self, **kwargs):
         super(CannonGame, self).__init__(**kwargs)
+        self.background = Image(source='background.jpg', allow_stretch=True, keep_ratio=False)
+        self.add_widget(self.background, index=len(self.children))
+        self.bind(size=self._update_background)
         self.wall = Wall(pos=(self.width * 5, 0))
         self.perpetio = Perpetio(pos=(self.width * 3, 0), size=(100, 100))
         self.mirror = Mirror(pos=(self.width * 3, 300), size=(20, 100))
         self.add_widget(self.wall)
         self.add_widget(self.perpetio)
         self.add_widget(self.mirror)
+
+    def _update_background(self, *args):
+        self.background.size = self.size
+        self.background.pos = self.pos
 
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
