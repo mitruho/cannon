@@ -115,10 +115,10 @@ class Projectile(Widget):
     def move(self, dt):
         self.vel = Vector(*self.vel) + Vector(*self.acceleration) * dt
         self.pos = Vector(*self.pos) + Vector(*self.vel) * dt
-        # print(f'y velocity: {self.vel_y}, x velocity: {self.vel_x}')
+        print(f'y velocity: {self.vel_y}, x velocity: {self.vel_x}')
 
         if self.parent:
-            if self.projectile_type in (1, 2):
+            if self.projectile_type in (1, 2) and not self.parent.perpetio.check_collision(self) and not self.parent.mirror.check_collision(self):
                 self.handle_drill()
             else:
                 if self.parent.check_collision(self):
