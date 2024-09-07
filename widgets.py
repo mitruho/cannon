@@ -118,11 +118,12 @@ class Projectile(Widget):
         print(f'y velocity: {self.vel_y}, x velocity: {self.vel_x}')
 
         if self.parent:
-            if self.projectile_type in (1, 2) and not self.parent.perpetio.check_collision(self) and not self.parent.mirror.check_collision(self):
+            if self.projectile_type in (1, 2) and not self.parent.perpetio.check_collision(self):
                 self.handle_drill()
             else:
                 if self.parent.check_collision(self):
-                    self.stop_moving()
+                    if not (self.projectile_type == 2 and self.parent.mirror.check_collision(self)):
+                        self.stop_moving()
 
         if self.y < 0:
             self.y = 0
@@ -160,11 +161,20 @@ class Brick(Widget):
         self.canvas.clear()
 
 class Perpetio(Widget):
+    width = NumericProperty(0)
+    height = NumericProperty(0)
+
     def __init__(self, **kwargs):
         super(Perpetio, self).__init__(**kwargs)
         with self.canvas:
             Color(1, 1, 1, 1)
             self.rect = Rectangle(size=(self.width, self.height), pos=self.pos)
+
+        self.bind(pos=self.update_rect, size=self.update_rect)
+
+    def update_rect(self, *args):
+        self.rect.pos = self.pos
+        self.rect.size = self.size
 
     def check_collision(self, projectile):
         collision_detected = False
@@ -184,15 +194,17 @@ class Mirror(Widget):
         collision_detected = False
         if self.collide_widget(projectile):
             if projectile.projectile_type == 2:
-                projectile.vel_x = -projectile.vel_x
+                if projectile.y <= self.y + self.height/2:
+                    projectile.vel_y = -projectile.vel_y
+                else:
+                    projectile.vel_x = -projectile.vel_x
             else:
                 collision_detected = True
         return collision_detected
-
     
 class Wall(Widget):
     rows = NumericProperty(15)
-    columns = NumericProperty(1)
+    columns = NumericProperty(0)
     brick_width = NumericProperty(20)
     brick_height = NumericProperty(10)
     brick_gap = NumericProperty(5)
@@ -200,15 +212,6 @@ class Wall(Widget):
 
     def __init__(self, **kwargs):
         super(Wall, self).__init__(**kwargs)
-        self.build_wall()
-
-    def set_columns_based_on_score(self, score):
-        if score == 1:
-            self.columns = 3
-        elif score >= 2:
-            self.columns = 6
-        else:
-            self.columns = 1
         self.build_wall()
 
     def build_wall(self):
