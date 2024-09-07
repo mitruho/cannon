@@ -95,7 +95,7 @@ class Projectile(Widget):
         self._clock_event = Clock.schedule_interval(self.move, 1 / FPS)
 
         if self.projectile_type == 2:
-            self.laser_timer = Clock.schedule_once(self.stop_moving, LASER_IMPULSE)
+            self.laser_timer = Clock.schedule_once(self.reset_movement, LASER_IMPULSE)
 
     def stop_moving(self, dt=None):
         if self._clock_event:
@@ -118,12 +118,11 @@ class Projectile(Widget):
         print(f'y velocity: {self.vel_y}, x velocity: {self.vel_x}')
 
         if self.parent:
-            if self.projectile_type in (1, 2) and not self.parent.perpetio.check_collision(self):
+            if self.projectile_type in (1, 2) and not self.parent.perpetio.check_collision(self) and not (self.projectile_type == 1 and self.parent.mirror.check_collision(self)):
                 self.handle_drill()
             else:
                 if self.parent.check_collision(self):
-                    if not (self.projectile_type == 2 and self.parent.mirror.check_collision(self)):
-                        self.stop_moving()
+                    self.reset_movement()
 
         if self.y < 0:
             self.y = 0
@@ -134,7 +133,7 @@ class Projectile(Widget):
         if self.parent.check_collision(self):
             self.penetration_depth -= 1
             if self.penetration_depth <= 0:
-                self.stop_moving()
+                self.reset_movement()
 
     def reset_penetration_depth(self):
         if self.projectile_type == 1:  # Bomb

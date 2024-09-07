@@ -20,7 +20,7 @@ class CannonGame(Widget):
         self.bind(size=self._update_background)
         self.wall = Wall(pos=(self.width * 5, 0))
         self.perpetio = Perpetio(pos=(self.width * 3, 0))
-        self.mirror = Mirror(pos=(self.width * 3, 300), size=(0, 0)) # disables
+        self.mirror = Mirror(pos=(self.width * 3, 300), size=(0, 0)) # disabled
         self.add_widget(self.wall)
         self.add_widget(self.perpetio)
         self.add_widget(self.mirror)
