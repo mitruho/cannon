@@ -2,8 +2,8 @@ import math
 from kivy.uix.image import Image
 from kivy.uix.widget import Widget
 from kivy.properties import NumericProperty, ObjectProperty
-from kivy.app import App
 from widgets import *
+from levels import *
 
 class CannonGame(Widget):
     projectile = ObjectProperty(None)
@@ -15,12 +15,12 @@ class CannonGame(Widget):
 
     def __init__(self, **kwargs):
         super(CannonGame, self).__init__(**kwargs)
-        self.background = Image(source='background.jpg', allow_stretch=True, keep_ratio=False)
+        self.background = Image(source='assets/background.jpg', allow_stretch=True, keep_ratio=False)
         self.add_widget(self.background, index=len(self.children))
         self.bind(size=self._update_background)
         self.wall = Wall(pos=(self.width * 5, 0))
-        self.perpetio = Perpetio(pos=(self.width * 3, 0))
-        self.mirror = Mirror(pos=(self.width * 3, 300), size=(0, 0)) # disabled
+        self.perpetio = Perpetio()
+        self.mirror = Mirror() # disabled
         self.add_widget(self.wall)
         self.add_widget(self.perpetio)
         self.add_widget(self.mirror)
@@ -61,29 +61,10 @@ class CannonGame(Widget):
             return True
         return False
 
-    def levels(self, score):
-        if score == 1:
-            self.wall.columns = 1
-        elif score == 2:
-            self.wall.columns = 3
-        elif score == 3:
-            self.wall.columns = 6
-        elif score == 4:
-            self.wall.columns = 9
-        elif score == 5:
-            self.wall.columns = 9
-            self.perpetio.height = 50
-            self.perpetio.width = 10
-        elif score == 6:
-            self.wall.columns = 9
-            self.perpetio.height = 60
-            self.perpetio.width = 10
-        self.wall.build_wall()
-
     def on_collision(self):
         print("Collision detected!")
         self.score += 1
-        self.levels(self.score)
+        levels(self, self.score)
         self.reset_game(True)
 
     def get_score(self):
@@ -95,4 +76,4 @@ class CannonGame(Widget):
             self.score = 0
         self.projectile.reset_movement()
         self.parent.parent.update_attempts(self.attempts)
-        self.levels(self.score)
+        levels(self, self.score)

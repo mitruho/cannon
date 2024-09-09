@@ -162,12 +162,14 @@ class Brick(Widget):
 class Perpetio(Widget):
     width = NumericProperty(0)
     height = NumericProperty(0)
+    pos_x = NumericProperty(0)
+    pos_y = NumericProperty(0)
 
     def __init__(self, **kwargs):
         super(Perpetio, self).__init__(**kwargs)
         with self.canvas:
             Color(1, 1, 1, 1)
-            self.rect = Rectangle(size=(self.width, self.height), pos=self.pos)
+            self.rect = Rectangle(size=(self.width, self.height), pos=(self.pos_x, self.pos_y))
 
         self.bind(pos=self.update_rect, size=self.update_rect)
 
@@ -182,12 +184,22 @@ class Perpetio(Widget):
         return collision_detected
 
 class Mirror(Widget):
+    width = NumericProperty(0)
+    height = NumericProperty(0)
+    pos_x = NumericProperty(0)
+    pos_y = NumericProperty(0)
 
     def __init__(self, **kwargs):
         super(Mirror, self).__init__(**kwargs)
         with self.canvas:
             Color(1, 1, 1, 1)
-            self.rect = Rectangle(size=(self.width, self.height), pos=self.pos)
+            self.rect = Rectangle(size=(self.width, self.height), pos=(self.pos_x, self.pos_y))
+
+        self.bind(pos=self.update_rect, size=self.update_rect)
+
+    def update_rect(self, *args):
+        self.rect.pos = self.pos
+        self.rect.size = self.size
 
     def check_collision(self, projectile):
         collision_detected = False
