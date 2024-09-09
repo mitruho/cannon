@@ -30,6 +30,35 @@ class ScoreboardScreen(Screen):
     def update_scores(self, scores):
         self.scores_label.text = '\n'.join([f'{nickname}: {score}' for nickname, score in scores])
 
+class HelpScreen(Screen):
+    def __init__(self, **kwargs):
+        super(HelpScreen, self).__init__(**kwargs)
+        self.layout = BoxLayout(orientation='vertical')
+        
+        top_layout = BoxLayout(orientation='horizontal', size_hint_y=0.15)
+        back_button = Button(text='Back', size_hint=(1, None))
+        back_button.bind(on_release=self.go_back)
+
+        top_layout.add_widget(back_button)
+        top_layout.add_widget(Label(text='Help'))
+        self.layout.add_widget(top_layout)
+        
+        with open('assets/help_text.txt', 'r') as file:
+            help_text = file.read()
+        
+        help_text_label = Label(
+            text=help_text,
+            text_size=(SCREEN_WIDTH, None),
+            halign='center')
+
+        self.layout.add_widget(help_text_label)
+
+        self.add_widget(self.layout)
+
+    def go_back(self, *args):
+        self.manager.current = 'menu'
+
+
 class NicknameScreen(Screen):
     def __init__(self, **kwargs):
         super(NicknameScreen, self).__init__(**kwargs)
@@ -98,6 +127,10 @@ class MenuScreen(Screen):
         best_players_button = Button(text='Best Players', size_hint=(None, 1), width=150)
         best_players_button.bind(on_release=self.show_best_players)
         self.layout.add_widget(best_players_button)
+
+        help_button = Button(text='Help', size_hint=(None, 1), width=150)
+        help_button.bind(on_release=self.show_help)
+        self.layout.add_widget(help_button)
 
         set_nickname_button = Button(text='Set Nickname', size_hint=(None, 1), width=150)
         set_nickname_button.bind(on_release=self.show_set_nickname)
@@ -180,6 +213,9 @@ class MenuScreen(Screen):
 
     def show_best_players(self, *args):
         self.manager.current = 'scoreboard'
+
+    def show_help(self, *args):
+        self.manager.current = 'help'
 
     def show_set_nickname(self, *args):
         self.manager.current = 'nickname'

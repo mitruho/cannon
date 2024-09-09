@@ -10,6 +10,7 @@ class CannonApp(App):
         sm = ScreenManager()
         sm.add_widget(MenuScreen(name='menu'))
         sm.add_widget(ScoreboardScreen(name='scoreboard'))
+        sm.add_widget(HelpScreen(name='help'))
         sm.add_widget(NicknameScreen(name='nickname'))
         return sm
 
