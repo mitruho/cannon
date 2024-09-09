@@ -50,14 +50,72 @@ class HelpScreen(Screen):
             text=help_text,
             text_size=(SCREEN_WIDTH, None),
             halign='center')
-
         self.layout.add_widget(help_text_label)
+
+        bottom_layout = BoxLayout(orientation='horizontal', size_hint_y=0.1, padding=[50, 50, 50, 50])
+        projectiles_button = Button(text='Projectiles', size_hint=(1, None))
+        obsticles_button = Button(text='Obsticles', size_hint=(1, None))
+        bottom_layout.add_widget(projectiles_button)
+        bottom_layout.add_widget(obsticles_button)
+        obsticles_button.bind(on_press=self.go_to_obstacles)
+        projectiles_button.bind(on_press=self.go_to_projectiles)
+        self.layout.add_widget(bottom_layout)
 
         self.add_widget(self.layout)
 
     def go_back(self, *args):
         self.manager.current = 'menu'
 
+    def go_to_obstacles(self, instance):
+        # Switch to the Obstacles screen
+        self.manager.current = 'obstacles'
+
+    def go_to_projectiles(self, instance):
+        # Switch to the Projectiles screen
+        self.manager.current = 'projectiles'
+
+class ObstaclesScreen(Screen):
+    def __init__(self, **kwargs):
+        super(ObstaclesScreen, self).__init__(**kwargs)
+        self.layout = BoxLayout(orientation='vertical')
+
+        top_layout = BoxLayout(orientation='horizontal', size_hint_y=0.15)
+        back_button = Button(text='Back', size_hint=(1, None))
+        back_button.bind(on_release=self.go_back)
+
+        top_layout.add_widget(back_button)
+        top_layout.add_widget(Label(text='Obstacles'))
+        self.layout.add_widget(top_layout)
+
+        # Placeholder text for Obstacles
+        self.layout.add_widget(Label(text="Obstacles help text: Placeholder content for Obstacles."))
+        self.add_widget(self.layout)
+
+    def go_back(self, instance):
+        # Navigate back to the Help screen
+        self.manager.current = 'help'
+
+class ProjectilesScreen(Screen):
+    def __init__(self, **kwargs):
+        super(ProjectilesScreen, self).__init__(**kwargs)
+        self.layout = BoxLayout(orientation='vertical')
+
+        top_layout = BoxLayout(orientation='horizontal', size_hint_y=0.15)
+        back_button = Button(text='Back', size_hint=(1, None))
+        back_button.bind(on_release=self.go_back)
+
+        top_layout.add_widget(back_button)
+        top_layout.add_widget(Label(text='Projectiles'))
+        self.layout.add_widget(top_layout)
+
+        # Placeholder text for Projectiles
+        self.layout.add_widget(Label(text="Projectiles help text: Placeholder content for Projectiles."))
+
+        self.add_widget(self.layout)
+
+    def go_back(self, instance):
+        # Navigate back to the Help screen
+        self.manager.current = 'help'
 
 class NicknameScreen(Screen):
     def __init__(self, **kwargs):

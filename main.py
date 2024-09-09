@@ -11,6 +11,8 @@ class CannonApp(App):
         sm.add_widget(MenuScreen(name='menu'))
         sm.add_widget(ScoreboardScreen(name='scoreboard'))
         sm.add_widget(HelpScreen(name='help'))
+        sm.add_widget(ObstaclesScreen(name='obstacles'))
+        sm.add_widget(ProjectilesScreen(name='projectiles'))
         sm.add_widget(NicknameScreen(name='nickname'))
         return sm
 
