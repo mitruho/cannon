@@ -79,7 +79,7 @@ class Projectile(Widget):
             self.gravity_y = -9.8
             self.penetration_depth = BOMB_DRILL
         elif self.projectile_type == 2:
-            self.projectile_width, self.projectile_height = (10, 10)
+            self.projectile_width, self.projectile_height = (15, 15)
             self.launch_speed = LASER_VEL
             self.gravity_y = 0
             self.penetration_depth = LASER_IMPULSE
