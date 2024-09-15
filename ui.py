@@ -30,6 +30,56 @@ class ScoreboardScreen(Screen):
     def update_scores(self, scores):
         self.scores_label.text = '\n'.join([f'{nickname}: {score}' for nickname, score in scores])
 
+class SavesScreen(Screen):
+    def __init__(self, **kwargs):
+        super(SavesScreen, self).__init__(**kwargs)
+        self.layout = BoxLayout(orientation='vertical')
+        top_layout = BoxLayout(orientation='horizontal', size_hint_y=0.15)
+        back_button = Button(text='Back', size_hint=(1, None))
+        back_button.bind(on_release=self.go_back)
+        top_layout.add_widget(back_button)
+        top_layout.add_widget(Label(text='Save / Load'))
+        self.layout.add_widget(top_layout)
+        self.saves_layout = BoxLayout(orientation='vertical')
+        
+        for i in range(3):
+            # Save Button
+            self.save_layout = BoxLayout(orientation='horizontal')
+            save_btn = Button(text=f'Save Slot {i+1}')
+            save_btn.bind(on_release=lambda _, x=i: self.save_game(x))
+            self.save_layout.add_widget(save_btn)
+
+            # Load Button
+            load_btn = Button(text=f'Load Slot {i+1}')
+            load_btn.bind(on_release=lambda _, x=i: self.load_game(x))
+            self.save_layout.add_widget(load_btn)
+
+            # Delete Button
+            delete_btn = Button(text=f'Delete Slot {i+1}')
+            delete_btn.bind(on_release=lambda _, x=i: self.delete_game(x))
+            self.save_layout.add_widget(delete_btn)
+            self.saves_layout.add_widget(self.save_layout)
+
+        self.layout.add_widget(self.saves_layout)
+        self.add_widget(self.layout)
+
+    def save_game(self, slot):
+        if self.manager.get_screen('menu').cannon_game.save(slot):
+            print(f"Game saved in slot {slot+1}")
+
+    def load_game(self, slot):
+        if self.manager.get_screen('menu').cannon_game.load(slot):
+            print(f"Game loaded from slot {slot+1}")
+            self.manager.current = 'menu'
+
+    def delete_game(self, slot):
+        if self.manager.get_screen('menu').cannon_game.delete_save(slot):
+            print(f"Save in slot {slot+1} deleted")
+            
+    def go_back(self, *args):
+        self.manager.current = 'menu'
+
+
 class HelpScreen(Screen):
     def __init__(self, **kwargs):
         super(HelpScreen, self).__init__(**kwargs)
@@ -186,6 +236,11 @@ class MenuScreen(Screen):
         best_players_button.bind(on_release=self.show_best_players)
         self.layout.add_widget(best_players_button)
 
+        saves_button = Button(text='Save / Load', size_hint=(None, 1), width=150)
+        saves_button.bind(on_release=self.show_saves)
+        self.layout.add_widget(saves_button)
+
+
         help_button = Button(text='Help', size_hint=(None, 1), width=150)
         help_button.bind(on_release=self.show_help)
         self.layout.add_widget(help_button)
@@ -197,7 +252,7 @@ class MenuScreen(Screen):
         self.nickname_label = Label(text='Nickname: player', size_hint=(None, 1), width=150)  # Nickname label
         self.layout.add_widget(self.nickname_label)
 
-        self.score_label = Label(text='Score: 0', size_hint=(None, 1), width=150)
+        self.score_label = Label(text='LVL: 0', size_hint=(None, 1), width=50)
         self.layout.add_widget(self.score_label)
 
         self.main_layout = BoxLayout(orientation='vertical')
@@ -212,7 +267,7 @@ class MenuScreen(Screen):
         self.current_nickname = "player"  # default nickname
 
     def update_score(self, instance, value):
-        self.score_label.text = f'Score: {value}'
+        self.score_label.text = f'LVL: {value}'
 
     def set_nickname(self, nickname):
         if self.current_nickname:
@@ -271,6 +326,9 @@ class MenuScreen(Screen):
 
     def show_best_players(self, *args):
         self.manager.current = 'scoreboard'
+    
+    def show_saves(self, *args):
+        self.manager.current = 'saves'
 
     def show_help(self, *args):
         self.manager.current = 'help'

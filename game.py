@@ -2,6 +2,7 @@ import math
 from kivy.uix.image import Image
 from kivy.uix.widget import Widget
 from kivy.properties import NumericProperty, ObjectProperty
+from save_manager import save_game, load_game, delete_save
 from widgets import *
 from levels import *
 
@@ -77,3 +78,28 @@ class CannonGame(Widget):
         self.projectile.reset_movement()
         self.parent.parent.update_attempts(self.attempts)
         levels(self, self.score)
+
+    def save(self, slot):
+        player_data = {
+            'score': self.score,
+            'nickname': self.parent.parent.current_nickname  # Access nickname from MenuScreen
+        }
+        return save_game(slot, player_data)
+
+    def load(self, slot):
+        player_data = load_game(slot)
+        if player_data:
+            # Load the score and update nickname
+            self.parent.parent.set_nickname(player_data['nickname'])  # Update the nickname
+            
+            # Set the game state based on the loaded score
+            self.reset_game(True)
+            self.score = player_data['score']
+            levels(self, self.score)
+            
+            # Confirm the load was successful
+            return True
+        return False
+
+    def delete_save(self, slot):
+        return delete_save(slot)
