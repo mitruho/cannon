@@ -93,7 +93,6 @@ class CannonGame(Widget):
             self.parent.parent.set_nickname(player_data['nickname'])  # Update the nickname
             
             # Set the game state based on the loaded score
-            self.reset_game(True)
             self.score = player_data['score']
             levels(self, self.score)
             
