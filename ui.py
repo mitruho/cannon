@@ -6,6 +6,7 @@ from kivy.core.window import Window
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from game import *
+from save_manager import load_saves
 from cannon_constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
 class ScoreboardScreen(Screen):
@@ -34,51 +35,79 @@ class SavesScreen(Screen):
     def __init__(self, **kwargs):
         super(SavesScreen, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation='vertical')
+
+        # Existing top layout with Back button
         top_layout = BoxLayout(orientation='horizontal', size_hint_y=0.15)
         back_button = Button(text='Back', size_hint=(1, None))
         back_button.bind(on_release=self.go_back)
         top_layout.add_widget(back_button)
         top_layout.add_widget(Label(text='Save / Load'))
         self.layout.add_widget(top_layout)
+
+        # Layout to hold the save slots
         self.saves_layout = BoxLayout(orientation='vertical')
-        
-        for i in range(3):
-            # Save Button
-            self.save_layout = BoxLayout(orientation='horizontal')
-            save_btn = Button(text=f'Save Slot {i+1}')
-            save_btn.bind(on_release=lambda _, x=i: self.save_game(x))
-            self.save_layout.add_widget(save_btn)
-
-            # Load Button
-            load_btn = Button(text=f'Load Slot {i+1}')
-            load_btn.bind(on_release=lambda _, x=i: self.load_game(x))
-            self.save_layout.add_widget(load_btn)
-
-            # Delete Button
-            delete_btn = Button(text=f'Delete Slot {i+1}')
-            delete_btn.bind(on_release=lambda _, x=i: self.delete_game(x))
-            self.save_layout.add_widget(delete_btn)
-            self.saves_layout.add_widget(self.save_layout)
-
         self.layout.add_widget(self.saves_layout)
         self.add_widget(self.layout)
+        
+        # Initialize save slots display
+        self.update_saves_display()
+
+    def update_saves_display(self):
+        # Clear existing widgets
+        self.saves_layout.clear_widgets()
+        
+        # Load current saves
+        saves = load_saves()
+
+        # Create the layout for each save slot
+        for i in range(3):
+            slot_layout = BoxLayout(orientation='vertical', padding=10, spacing=5)
+            slot_data = saves[i]
+            
+            if slot_data is not None:
+                # Show nickname and score
+                slot_info = Label(text=f"Nickname: {slot_data['nickname']}, Score: {slot_data['score']}")
+                slot_layout.add_widget(slot_info)
+
+                # Add Load and Delete buttons
+                buttons_layout = BoxLayout(orientation='horizontal')
+                
+                load_btn = Button(text='Load')
+                load_btn.bind(on_release=lambda _, x=i: self.load_game(x))
+                buttons_layout.add_widget(load_btn)
+
+                delete_btn = Button(text='Delete')
+                delete_btn.bind(on_release=lambda _, x=i: self.delete_game(x))
+                buttons_layout.add_widget(delete_btn)
+
+                slot_layout.add_widget(buttons_layout)
+            else:
+                # Slot is empty; show a Save button spanning the slot
+                save_btn = Button(text='Save (Empty Slot)')
+                save_btn.bind(on_release=lambda _, x=i: self.save_game(x))
+                slot_layout.add_widget(save_btn)
+
+            # Add the slot layout to the main layout
+            self.saves_layout.add_widget(slot_layout)
 
     def save_game(self, slot):
         if self.manager.get_screen('menu').cannon_game.save(slot):
-            print(f"Game saved in slot {slot+1}")
+            print(f"Game saved in slot {slot + 1}")
+            self.update_saves_display()  # Refresh the display
 
     def load_game(self, slot):
         if self.manager.get_screen('menu').cannon_game.load(slot):
-            print(f"Game loaded from slot {slot+1}")
+            print(f"Game loaded from slot {slot + 1}")
             self.manager.current = 'menu'
+            self.update_saves_display()  # Refresh the display
 
     def delete_game(self, slot):
         if self.manager.get_screen('menu').cannon_game.delete_save(slot):
-            print(f"Save in slot {slot+1} deleted")
-            
+            print(f"Save in slot {slot + 1} deleted")
+            self.update_saves_display()  # Refresh the display
+
     def go_back(self, *args):
         self.manager.current = 'menu'
-
 
 class HelpScreen(Screen):
     def __init__(self, **kwargs):
