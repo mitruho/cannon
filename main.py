@@ -7,6 +7,8 @@ from ui import *
 class CannonApp(App):
     def build(self):
         Window.size = (SCREEN_WIDTH, SCREEN_HEIGHT)
+        Window.resizable = False
+        Window.borderless = '1'
         sm = ScreenManager()
         sm.add_widget(MenuScreen(name='menu'))
         sm.add_widget(ScoreboardScreen(name='scoreboard'))
