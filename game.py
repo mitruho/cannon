@@ -16,7 +16,7 @@ class CannonGame(Widget):
 
     def __init__(self, **kwargs):
         super(CannonGame, self).__init__(**kwargs)
-        self.background = Image(source='assets/background.jpg', allow_stretch=True, keep_ratio=False)
+        self.background = Image(source='assets/background.png', allow_stretch=False, keep_ratio=True, fit_mode="fill")
         self.add_widget(self.background, index=len(self.children))
         self.bind(size=self._update_background)
         self.wall = Wall(pos=(self.width * 5, 0))

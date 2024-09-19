@@ -4,7 +4,7 @@
         Ellipse:
             pos: self.pos
             size: self.size
-            source: 'default.jpg'
+            source: 'assets/default.jpg'
             
 <Cannon>:
     size: 100, 30
@@ -17,7 +17,7 @@
         Rectangle:
             pos: self.x + 15, self.center_y - 15
             size: self.size
-            source: 'default.jpg'
+            source: 'assets/cannon_texture.jpg'
     canvas.after:
         PopMatrix
 
@@ -26,7 +26,7 @@
         Ellipse:
             size: self.height, self.width
             pos: self.x, self.y
-            source: 'default.jpg'
+            source: 'assets/default.jpg'
 <CannonGame>:
     cannon: cannon
     projectile: projectile

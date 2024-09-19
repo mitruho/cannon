@@ -6,6 +6,7 @@ from kivy.core.window import Window
 from kivy.properties import ReferenceListProperty, NumericProperty, BooleanProperty, ObjectProperty
 from cannon_constants import *
 from kivy.graphics import Rectangle, Color
+from kivy.core.image import Image as CoreImage
 
 class Cannon(Widget):
     angle = NumericProperty(0)
@@ -141,21 +142,29 @@ class Projectile(Widget):
         elif self.projectile_type == 2:  # Laser
             self.penetration_depth = LASER_IMPULSE
 
+
 class Brick(Widget):
     destroyed = BooleanProperty(False)
 
     def __init__(self, **kwargs):
         super(Brick, self).__init__(**kwargs)
+        
+        # Load the texture
+        self.texture = CoreImage('assets/brick_texture.png').texture
+
         with self.canvas:
-            Color(0.5, 0.5, 0.5, 1)
-            self.rect = Rectangle(size=(self.width, self.height), pos=self.pos)
+            # Draw the brick using the texture
+            self.rect = Rectangle(size=self.size, pos=self.pos, texture=self.texture)
+        
         self.bind(pos=self.update_rect, size=self.update_rect)
 
     def update_rect(self, *args):
+        # Update the position and size of the texture rectangle
         self.rect.pos = self.pos
         self.rect.size = self.size
 
     def destroy(self):
+        # Clear the brick when it is destroyed
         self.destroyed = True
         self.canvas.clear()
 
