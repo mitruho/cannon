@@ -3,7 +3,7 @@ from kivy.uix.widget import Widget
 from kivy.vector import Vector
 from kivy.clock import Clock
 from kivy.core.window import Window
-from kivy.properties import ReferenceListProperty, NumericProperty, BooleanProperty, ObjectProperty
+from kivy.properties import ReferenceListProperty, NumericProperty, BooleanProperty, ObjectProperty, StringProperty
 from cannon_constants import *
 from kivy.graphics import Rectangle, Color
 from kivy.core.image import Image as CoreImage
@@ -54,7 +54,8 @@ class Projectile(Widget):
     acceleration = ReferenceListProperty(gravity_x, gravity_y)
     launch_speed = NumericProperty(BOMB_MAX_VEL)
     penetration_depth = NumericProperty(BOMB_DRILL)
-
+    texture_source = StringProperty('assets/bullet_texture.png')
+    angle = NumericProperty(0)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -74,16 +75,26 @@ class Projectile(Widget):
             self.projectile_width, self.projectile_height = BULLET_SIZE
             self.launch_speed = BULLET_MAX_VEL
             self.gravity_y = -9.8
+            self.texture_source = StringProperty('assets/bullet_texture.png')
         elif self.projectile_type == 1:
             self.projectile_width, self.projectile_height = BOMB_SIZE
             self.launch_speed = BOMB_MAX_VEL
             self.gravity_y = -9.8
             self.penetration_depth = BOMB_DRILL
+            self.texture_source = 'assets/bomb_texture.png'
         elif self.projectile_type == 2:
-            self.projectile_width, self.projectile_height = (15, 15)
+            self.projectile_width, self.projectile_height = (20, 50)
             self.launch_speed = LASER_VEL
             self.gravity_y = 0
             self.penetration_depth = LASER_IMPULSE
+            self.texture_source = 'assets/laser_texture.png'
+
+    def update_angle(self, instance, value):
+        # Update the angle based on the velocity vector to point in the movement direction
+        if len(self.vel) == 2:  # Ensure the velocity has two components (x and y)
+            velocity_vector = Vector(self.vel)
+            if velocity_vector.length() > 0:  # Only calculate the angle if there's movement
+                self.angle = velocity_vector.angle(Vector(1, 0))  # Angle with the horizontal axis
 
     def start_moving(self, launch_angle, start_x, start_y):
         self.reset_movement()
@@ -93,6 +104,7 @@ class Projectile(Widget):
         self.vel_y = self.launch_speed * math.sin(self.launch_angle_radians)
         self.x = start_x
         self.y = start_y
+        self.update_angle(None, None)
         self._clock_event = Clock.schedule_interval(self.move, 1 / FPS)
 
         if self.projectile_type == 2:

@@ -18,6 +18,5 @@ class CannonApp(App):
         sm.add_widget(ProjectilesScreen(name='projectiles'))
         sm.add_widget(NicknameScreen(name='nickname'))
         return sm
-
 if __name__ == '__main__':
     CannonApp().run()

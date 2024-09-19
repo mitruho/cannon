@@ -1,11 +1,15 @@
 <Projectile>:
     size: self.projectile_height, self.projectile_width
     canvas:
+        PushMatrix
+        Rotate:
+            angle: self.angle 
+            origin: self.center
         Ellipse:
             pos: self.pos
             size: self.size
-            source: 'assets/default.jpg'
-            
+            source: self.texture_source
+        PopMatrix
 <Cannon>:
     size: 100, 30
     canvas.before:
@@ -31,11 +35,11 @@
     cannon: cannon
     projectile: projectile
     target: target
+    Projectile:
+        id: projectile
     Cannon:
         id: cannon
         angle: 0
-    Projectile:
-        id: projectile
     Target:
         id: target
 
