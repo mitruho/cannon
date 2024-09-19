@@ -234,9 +234,9 @@ class NicknameScreen(Screen):
 class MenuScreen(Screen):
     def __init__(self, **kwargs):
         super(MenuScreen, self).__init__(**kwargs)
-        self.layout = BoxLayout(orientation='horizontal', size_hint=(1, None), height=50)
+        self.layout = BoxLayout(orientation='horizontal', size_hint=(1, None), height=SCREEN_HEIGHT/12)
 
-        self.attempts_layout = BoxLayout(orientation='horizontal', size_hint=(None, 1), width=30)
+        self.attempts_layout = BoxLayout(orientation='horizontal', size_hint=(None, 1), width=SCREEN_WIDTH/27)
         self.attempts_indicators = [Label(size_hint=(None, 1), width=10, text="|", color=[0, 1, 1, 1], font_size='38sp') for _ in range(3)]
         for indicator in self.attempts_indicators:
             self.attempts_layout.add_widget(indicator)
@@ -257,31 +257,31 @@ class MenuScreen(Screen):
         btn_laser.bind(on_release=self.switch_to_laser)
         self.dropdown.add_widget(btn_laser)
 
-        main_button = Button(text='Type of projectile', size_hint=(None, 1), width=150)
+        main_button = Button(text='Type of projectile', size_hint=(None, 1), width=SCREEN_WIDTH/7)
         main_button.bind(on_release=self.dropdown.open)
         self.layout.add_widget(main_button)
 
-        best_players_button = Button(text='Best Players', size_hint=(None, 1), width=150)
+        best_players_button = Button(text='Best Players', size_hint=(None, 1), width=SCREEN_WIDTH/10)
         best_players_button.bind(on_release=self.show_best_players)
         self.layout.add_widget(best_players_button)
 
-        saves_button = Button(text='Save / Load', size_hint=(None, 1), width=150)
+        saves_button = Button(text='Save / Load', size_hint=(None, 1), width=SCREEN_WIDTH/10)
         saves_button.bind(on_release=self.show_saves)
         self.layout.add_widget(saves_button)
 
 
-        help_button = Button(text='Help', size_hint=(None, 1), width=150)
+        help_button = Button(text='Help', size_hint=(None, 1), width=SCREEN_WIDTH/12)
         help_button.bind(on_release=self.show_help)
         self.layout.add_widget(help_button)
 
-        set_nickname_button = Button(text='Set Nickname', size_hint=(None, 1), width=150)
+        set_nickname_button = Button(text='Set Nickname', size_hint=(None, 1), width=SCREEN_WIDTH/10)
         set_nickname_button.bind(on_release=self.show_set_nickname)
         self.layout.add_widget(set_nickname_button)
 
-        self.nickname_label = Label(text='Nickname: player', size_hint=(None, 1), width=150)  # Nickname label
+        self.nickname_label = Label(text='Nickname: player', size_hint=(None, 1), width=SCREEN_WIDTH/3)  # Nickname label
         self.layout.add_widget(self.nickname_label)
 
-        self.score_label = Label(text='LVL: 0', size_hint=(None, 1), width=50)
+        self.score_label = Label(text='LVL: 0', size_hint=(None, 1), width=SCREEN_WIDTH/27)
         self.layout.add_widget(self.score_label)
 
         self.main_layout = BoxLayout(orientation='vertical')
@@ -297,6 +297,8 @@ class MenuScreen(Screen):
 
     def update_score(self, instance, value):
         self.score_label.text = f'LVL: {value}'
+        self.cannon_game.score = value
+        levels(self.cannon_game, self.cannon_game.score)
 
     def set_nickname(self, nickname):
         if self.current_nickname:

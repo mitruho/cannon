@@ -36,7 +36,7 @@ class Target(Widget):
     width = NumericProperty(50)
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.x = Window.width * 4/5
+        self.x = SCREEN_WIDTH * 4/5
         self.y = 100
 
 BULLET_SIZE = (BULLET_RADIUS*2, BULLET_RADIUS*2)
