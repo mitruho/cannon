@@ -75,7 +75,7 @@ class Projectile(Widget):
             self.projectile_width, self.projectile_height = BULLET_SIZE
             self.launch_speed = BULLET_MAX_VEL
             self.gravity_y = -9.8
-            self.texture_source = StringProperty('assets/bullet_texture.png')
+            self.texture_source = 'assets/bullet_texture.png'
         elif self.projectile_type == 1:
             self.projectile_width, self.projectile_height = BOMB_SIZE
             self.launch_speed = BOMB_MAX_VEL
