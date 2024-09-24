@@ -24,13 +24,22 @@
             source: 'assets/cannon_texture.png'
     canvas.after:
         PopMatrix
+<Wheel@Widget>:
+    canvas:
+        Color:
+            rgba: 1, 1, 1, 1
+        Ellipse:
+            pos: 0, 0  # Bottom-left corner of the circle
+            size: 30, 30  # Diameter is 30, so radius is 15
+            source: 'assets/wheel_texture.png'
 
 <Target>:
     canvas:
         Ellipse:
             size: self.height, self.width
             pos: self.x, self.y
-            source: 'assets/default.jpg'
+            source: 'assets/target_texture.png'
+            
 <CannonGame>:
     cannon: cannon
     projectile: projectile
@@ -42,4 +51,5 @@
         angle: 0
     Target:
         id: target
-
+    Wheel:
+        id: wheel
