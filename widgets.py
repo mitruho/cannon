@@ -188,9 +188,13 @@ class Perpetio(Widget):
 
     def __init__(self, **kwargs):
         super(Perpetio, self).__init__(**kwargs)
+
+        self.texture = CoreImage('assets/perpetio_texture.jpg').texture
+
+        # Add the rectangle with the texture
         with self.canvas:
             Color(1, 1, 1, 1)
-            self.rect = Rectangle(size=(self.width, self.height), pos=(self.pos_x, self.pos_y))
+            self.rect = Rectangle(size=(self.width, self.height), pos=(self.pos_x, self.pos_y), texture=self.texture)
 
         self.bind(pos=self.update_rect, size=self.update_rect)
 
@@ -212,9 +216,12 @@ class Mirror(Widget):
 
     def __init__(self, **kwargs):
         super(Mirror, self).__init__(**kwargs)
+
+        self.texture = CoreImage('assets/mirror_texture.jpg').texture
+
         with self.canvas:
             Color(1, 1, 1, 1)
-            self.rect = Rectangle(size=(self.width, self.height), pos=(self.pos_x, self.pos_y))
+            self.rect = Rectangle(size=(self.width, self.height), pos=(self.pos_x, self.pos_y), texture=self.texture)
 
         self.bind(pos=self.update_rect, size=self.update_rect)
 

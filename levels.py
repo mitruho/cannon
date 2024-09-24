@@ -1,5 +1,9 @@
 def levels(game, score):
-    if score == 1:
+    if score == 0:
+        game.wall.columns = 0
+        game.perpetio.size = (0, 0)
+        game.mirror.size = (0, 0)
+    elif score == 1:
         game.wall.columns = 1
     elif score == 2:
         game.wall.columns = 3

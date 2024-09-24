@@ -1,4 +1,5 @@
 import math
+from kivy.clock import Clock
 from kivy.uix.image import Image
 from kivy.uix.widget import Widget
 from kivy.properties import NumericProperty, ObjectProperty
@@ -11,7 +12,7 @@ class CannonGame(Widget):
     cannon = ObjectProperty(None)
     target = ObjectProperty(None)
     wall = ObjectProperty(None)
-    attempts = 3
+    attempts = NumericProperty(3)
     score = NumericProperty(0)
 
     def __init__(self, **kwargs):
@@ -21,10 +22,11 @@ class CannonGame(Widget):
         self.bind(size=self._update_background)
         self.wall = Wall(pos=(self.width * 5, 0))
         self.perpetio = Perpetio()
-        self.mirror = Mirror() # disabled
+        self.mirror = Mirror()
         self.add_widget(self.wall)
         self.add_widget(self.perpetio)
         self.add_widget(self.mirror)
+        Clock.schedule_interval(self.check_game_lost, 1 / 10)
 
     def _update_background(self, *args):
         self.background.size = self.size
@@ -75,6 +77,7 @@ class CannonGame(Widget):
         self.attempts = 3
         if not victory:
             self.score = 0
+            levels(self, 0)
         self.projectile.reset_movement()
         self.parent.parent.update_attempts(self.attempts)
         levels(self, self.score)
@@ -102,3 +105,12 @@ class CannonGame(Widget):
 
     def delete_save(self, slot):
         return delete_save(slot)
+
+    def check_game_lost(self, dt=None):
+        """
+        Check if the game is lost. The game is lost if attempts are 0 and
+        the projectile is outside the screen bounds.
+        """
+        if self.attempts == 0 and (self.projectile.vel_x < 1 or (self.projectile.x > SCREEN_WIDTH or self.projectile.y > SCREEN_HEIGHT)):
+            print("Game Over: The projectile is out of bounds.")
+            self.reset_game(False)
