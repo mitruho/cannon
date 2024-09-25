@@ -1,0 +1,5 @@
+Our game has 3 main types of projectile:
+1. Bullet - it has a big launch speed and follows has parabolic trajectory.
+2. Bombshell - it has a smaller launch speed, but is bigger and can destroy multiple objects
+3. Laser - it doesn't abide to the rules of physics and it can destroy multiple objects as well.
+By far, the laser is the strongest projectile you can launch.

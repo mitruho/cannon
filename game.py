@@ -92,14 +92,11 @@ class CannonGame(Widget):
     def load(self, slot):
         player_data = load_game(slot)
         if player_data:
-            # Load the score and update nickname
-            self.parent.parent.set_nickname(player_data['nickname'])  # Update the nickname
+            self.parent.parent.set_nickname(player_data['nickname'])
             
-            # Set the game state based on the loaded score
             self.score = player_data['score']
             levels(self, self.score)
             
-            # Confirm the load was successful
             return True
         return False
 
@@ -107,10 +104,6 @@ class CannonGame(Widget):
         return delete_save(slot)
 
     def check_game_lost(self, dt=None):
-        """
-        Check if the game is lost. The game is lost if attempts are 0 and
-        the projectile is outside the screen bounds.
-        """
         if self.attempts == 0 and (self.projectile.vel_x < 1 or (self.projectile.x > SCREEN_WIDTH or self.projectile.y > SCREEN_HEIGHT)):
             print("Game Over: The projectile is out of bounds.")
             self.reset_game(False)

@@ -90,11 +90,10 @@ class Projectile(Widget):
             self.texture_source = 'assets/laser_texture.png'
 
     def update_angle(self, instance, value):
-        # Update the angle based on the velocity vector to point in the movement direction
-        if len(self.vel) == 2:  # Ensure the velocity has two components (x and y)
+        if len(self.vel) == 2:
             velocity_vector = Vector(self.vel)
-            if velocity_vector.length() > 0:  # Only calculate the angle if there's movement
-                self.angle = velocity_vector.angle(Vector(1, 0))  # Angle with the horizontal axis
+            if velocity_vector.length() > 0:
+                self.angle = velocity_vector.angle(Vector(1, 0))
 
     def start_moving(self, launch_angle, start_x, start_y):
         self.reset_movement()
@@ -161,22 +160,18 @@ class Brick(Widget):
     def __init__(self, **kwargs):
         super(Brick, self).__init__(**kwargs)
         
-        # Load the texture
         self.texture = CoreImage('assets/brick_texture.png').texture
 
         with self.canvas:
-            # Draw the brick using the texture
             self.rect = Rectangle(size=self.size, pos=self.pos, texture=self.texture)
         
         self.bind(pos=self.update_rect, size=self.update_rect)
 
     def update_rect(self, *args):
-        # Update the position and size of the texture rectangle
         self.rect.pos = self.pos
         self.rect.size = self.size
 
     def destroy(self):
-        # Clear the brick when it is destroyed
         self.destroyed = True
         self.canvas.clear()
 
@@ -191,7 +186,6 @@ class Perpetio(Widget):
 
         self.texture = CoreImage('assets/perpetio_texture.jpg').texture
 
-        # Add the rectangle with the texture
         with self.canvas:
             Color(1, 1, 1, 1)
             self.rect = Rectangle(size=(self.width, self.height), pos=(self.pos_x, self.pos_y), texture=self.texture)

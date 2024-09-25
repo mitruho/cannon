@@ -165,9 +165,16 @@ class ObstaclesScreen(Screen):
         top_layout.add_widget(back_button)
         top_layout.add_widget(Label(text='Obstacles'))
         self.layout.add_widget(top_layout)
+        with open('assets/obstacles_text.txt', 'r') as file:
+            obstacles_text = file.read()
 
+        obstacles_text_label = Label(
+                    text=obstacles_text,
+                    text_size=(SCREEN_WIDTH, None),
+                    halign='center')
+        
         # Placeholder text for Obstacles
-        self.layout.add_widget(Label(text="Obstacles help text: Placeholder content for Obstacles."))
+        self.layout.add_widget(obstacles_text_label)
         self.add_widget(self.layout)
 
     def go_back(self, instance):
@@ -186,9 +193,16 @@ class ProjectilesScreen(Screen):
         top_layout.add_widget(back_button)
         top_layout.add_widget(Label(text='Projectiles'))
         self.layout.add_widget(top_layout)
+        with open('assets/projectiles_text.txt', 'r') as file:
+            projectiles_text = file.read()
 
+        projectiles_text_label = Label(
+                    text=projectiles_text,
+                    text_size=(SCREEN_WIDTH, None),
+                    halign='center')
+        
         # Placeholder text for Projectiles
-        self.layout.add_widget(Label(text="Projectiles help text: Placeholder content for Projectiles."))
+        self.layout.add_widget(projectiles_text_label)
 
         self.add_widget(self.layout)
 

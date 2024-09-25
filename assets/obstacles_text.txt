@@ -1,0 +1,4 @@
+"Cannon" has 3 main type of obstacles:
+1. Stone bricks - they are a foundation of a stone wall we can see starting from level. They can be destroyed by any projectile.
+2. Perpetio - this is a wall that can't be destroyed.
+3. Mirror - it can't be destroyed as well, but it reflects lasers, which is convenient in the last level.
