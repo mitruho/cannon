@@ -5,7 +5,7 @@ from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.properties import ReferenceListProperty, NumericProperty, BooleanProperty, ObjectProperty, StringProperty
 from cannon_constants import *
-from kivy.graphics import Rectangle, Color
+from kivy.graphics import Rectangle, Color, PushMatrix, PopMatrix, Rotate
 from kivy.core.image import Image as CoreImage
 
 class Cannon(Widget):
@@ -65,7 +65,29 @@ class Projectile(Widget):
         self.y = -100
         self.update_size()
         self.laser_timer = None
-        
+
+        with self.canvas:
+            PushMatrix()
+            self.rotation = Rotate()
+            self.rect = Rectangle(size=self.size, pos=self.pos,
+                                  texture=CoreImage(self.texture_source).texture)
+            PopMatrix()
+
+        self.bind(pos=self.update_graphics, size=self.update_graphics, angle=self.update_graphics)
+        self.bind(texture_source=self.on_texture_source)
+
+    def on_texture_source(self, instance, value):
+        self.rect.texture = CoreImage(self.texture_source).texture
+
+    def update_graphics(self, *args):
+        self.canvas.clear()
+        with self.canvas:
+            PushMatrix()
+            self.rotation = Rotate(angle=self.angle, origin=self.center)
+            self.rect = Rectangle(size=self.size, pos=self.pos, texture=CoreImage(self.texture_source).texture)
+            PopMatrix()
+
+
     def on_projectile_type(self, instance, value):
         self.reset_movement()
         self.update_size()
@@ -129,6 +151,9 @@ class Projectile(Widget):
         self.pos = Vector(*self.pos) + Vector(*self.vel) * dt
         print(f'y velocity: {self.vel_y}, x velocity: {self.vel_x}')
 
+        velocity_vector = Vector(*self.vel)
+        if velocity_vector.length() > 0:
+            self.angle = velocity_vector.angle(Vector(1, 0))
         if self.parent:
             if self.projectile_type in (1, 2) and not self.parent.perpetio.check_collision(self) and not (self.projectile_type == 1 and self.parent.mirror.check_collision(self)):
                 self.handle_drill()
